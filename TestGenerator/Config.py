@@ -1,0 +1,2 @@
+number_of_standard_tests_per_function = 3
+number_of_edge_case_tests_per_function_parameter = 2
