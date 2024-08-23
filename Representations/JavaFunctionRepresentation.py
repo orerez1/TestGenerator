@@ -33,10 +33,10 @@ class JavaFunctionRepresentation:
             self.declaration = self.declaration.replace('\t', '')
         
         # Part 3: Calling the methods that initialize the rest of the proerties based on the parameters received
-        self.extract_params
-        self.extract_function_types
-        self.extract_exceptions
-        self.extract_name
+        self.extract_params()
+        self.extract_function_types()
+        self.extract_exceptions()
+        self.extract_name()
         pass
             
               
