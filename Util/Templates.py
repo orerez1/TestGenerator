@@ -23,7 +23,7 @@ standard_test = """\t@Test
 \t}"""
 
 edge_case_test = """\t@Test
-\tpublic void testFUNCTION_IN_NAMENonStandardPARAM_NAMETEST_NUMBER() {
+\tpublic void testFUNCTION_IN_NAMEEdgeCasePARAM_NAMETEST_NUMBER() {
 \t\tfinal String EXPECTED = ?;
 \t\tPARAMS
 \t\tfinal String RESULT = new CLASS_NAME().FUNCTION(SENDING_PARAMS);
