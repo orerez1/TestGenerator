@@ -6,6 +6,19 @@ from Representations.JavaFunctionRepresentation import JavaFunctionRepresentatio
 
 import os
 
+def capitalize_first_letter(text: str):
+    """
+    Capitalize the first letter of a given text.
+
+    Args:
+        text (str): The input text to capitalize.
+
+    Returns:
+        str: The capitalized text.
+    """
+    if not text:
+        return text
+    return text[0].upper() + text[1:]
 
 def create_test_params(func: JavaFunctionRepresentation):
     # type: (JavaFunctionRepresentation) -> str
