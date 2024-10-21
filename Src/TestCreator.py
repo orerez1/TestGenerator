@@ -57,8 +57,9 @@ def create_sending_params(test_params):
     return ", ".join(params)
 
 
-def create_standard_test(function_name: str, class_name: str, test_params: str):
-    # type: (str, str, str) -> str
+def create_standard_test(func: JavaFunctionRepresentation, class_name: str, test_params: str):
+    # type: (JavaFunctionRepresentation, str, str) -> str
+    function_name = capitalize_first_letter(func.name)
     function_tests = ""
     for number in range(1, Config.number_of_standard_tests_per_function + 1):
         sending_params = create_sending_params(test_params=test_params)
@@ -66,11 +67,12 @@ def create_standard_test(function_name: str, class_name: str, test_params: str):
             Templates.standard_test.replace(
                 "FUNCTION_IN_NAME", capitalize_first_letter(function_name)
             )
-            .replace("FUNCTION", function_name)
+            .replace("FUNCTION", func.name)
             .replace("TEST_NUMBER", str(number))
             .replace("CLASS_NAME", class_name)
             .replace("\t\tPARAMS\n", test_params)
             .replace("SENDING_PARAMS", sending_params)
+            .replace("RETURN_TYPE", func.return_type)
         )
         function_tests += "\n\n"
     return function_tests[:-2]
@@ -88,12 +90,13 @@ def create_edge_case_test(
             sending_params = create_sending_params(test_params=test_params)
             function_tests += (
                 Templates.edge_case_test.replace("FUNCTION_IN_NAME", function_name)
-                .replace("FUNCTION", function_name)
+                .replace("FUNCTION", func.name)
                 .replace("TEST_NUMBER", str(number))
                 .replace("CLASS_NAME", class_name)
                 .replace("\n\t\tPARAMS\n", "\n" + test_params)
                 .replace("PARAM_NAME", param_name)
                 .replace("SENDING_PARAMS", sending_params)
+                .replace("RETURN_TYPE", func.return_type)
                 + "\n\n"
                 )
 
@@ -113,6 +116,21 @@ class TestCreator:
         for func in self.class_representation.functions:
             test_params = create_test_params(func=func)
             if func.return_type != "void":
+                test = create_standard_test(
+                    func=func,
+                    class_name=self.class_representation.name,
+                    test_params=test_params,
+                )
+                if not first:
+                    test = "\n" + test
+                else:
+                    first = False
+                tests += "\n" + test
+
+        first = True
+        for func in self.class_representation.functions:
+            test_params = create_test_params(func=func)
+            if func.return_type != "void":
                 test = create_edge_case_test(
                     func=func,
                     class_name=self.class_representation.name,
@@ -124,19 +142,7 @@ class TestCreator:
                     first = False
                 tests += "\n" + test
 
-        for func in self.class_representation.functions:
-            test_params = create_test_params(func=func)
-            if func.return_type != "void":
-                test = create_standard_test(
-                    function_name=func.name,
-                    class_name=self.class_representation.name,
-                    test_params=test_params,
-                )
-                if not first:
-                    test = "\n" + test
-                else:
-                    first = False
-                tests += "\n" + test
+        
         return tests
 
     # todo: documentation
@@ -153,8 +159,6 @@ class TestCreator:
         if not os.path.exists(path_to_dir):
             os.mkdir(path_to_dir)
 
-        if not os.path.exists(path_to_dir + end_dir):
-            os.mkdir(path_to_dir + end_dir)
 
     # todo: documentation and code
     def create_file(self):
