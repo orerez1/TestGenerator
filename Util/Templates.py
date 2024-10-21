@@ -14,38 +14,34 @@ idea_projects_path = path_param.split("IdeaProjects" + separator)[0] + "IdeaProj
 path_to_project = idea_projects_path + "PROJECT_NAME" + separator
 path_to_test_classes = path_to_project + tests_folder_name + separator + "testClasses" + separator + "CLASS_NAMETest.java"
 
-standard_test = """
-    @Test
-    public void testFUNCTION_IN_NAMEStandardTEST_NUMBER() {
-        final String EXPECTED = ?;
-        PARAMS
-        final String RESULT = new CLASS_NAME().FUNCTIONS(SENDING_PARAMS);
-        assertEquals(EXPECTED, RESULT);
-    }"""
+standard_test = """\t@Test
+\tpublic void testFUNCTION_IN_NAMEStandardTEST_NUMBER() {
+\t\tfinal String EXPECTED = ?;
+\t\tPARAMS
+\t\tfinal String RESULT = new CLASS_NAME().FUNCTION(SENDING_PARAMS);
+\tassertEquals(EXPECTED, RESULT);
+\t}"""
 
-edge_case_test = """
-    @Test
-    public void testFUNCTION_IN_NAMENonStandardPARAM_NAMETEST_NUMBER() {
-        final String EXPECTED = ?;
-        PARAMS
-        final String RESULT = new CLASS_NAME().FUNCTIONS(SENDING_PARAMS);
-        assertEquals(EXPECTED, RESULT);
-    }"""
+edge_case_test = """\t@Test
+\tpublic void testFUNCTION_IN_NAMENonStandardPARAM_NAMETEST_NUMBER() {
+\t\tfinal String EXPECTED = ?;
+\t\tPARAMS
+\t\tfinal String RESULT = new CLASS_NAME().FUNCTION(SENDING_PARAMS);
+\t\tassertEquals(EXPECTED, RESULT);
+\t}"""
     
-null_case_test = """
-    @Test
-    public void testFUNCTION_IN_NAMENullParamTEST_NUMBER() {
-        final String EXPECTED = ?;
-        PARAMS
-        final String RESULT = new CLASS_NAME().FUNCTIONS(SENDING_PARAMS);
-        assertEquals(EXPECTED, RESULT);
-    }"""
+null_case_test = """\t@Test
+\tpublic void testFUNCTION_IN_NAMENullParamTEST_NUMBER() {
+\t\tfinal String EXPECTED = ?;
+\t\tPARAMS
+\t\tfinal String RESULT = new CLASS_NAME().FUNCTION(SENDING_PARAMS);
+\t\tassertEquals(EXPECTED, RESULT);
+\t}"""
     
-expected_error_test = """
-    @Test(expectedExceptions = EXCEPTION.class)
-    public void testFUNCTION_IN_NAMEThrowsEXCEPTION() {
-        new CLASS_NAME(?).FUNCTION(?);
-    }"""
+expected_error_test = """\t@Test(expectedExceptions = EXCEPTION.class)
+\tpublic void testFUNCTION_IN_NAMEThrowsEXCEPTION() {
+\t\tnew CLASS_NAME(?).FUNCTION(?);
+\t}"""
     
 final_param_for_test = "final PARAM_TYPE PARAM_NAME = ?;"
 
@@ -56,16 +52,19 @@ tear_down_function = """
     }"""
 
 before_test_function = """
-    @BeforeTest
-    public void beforeTest() {
-        
-    }"""
+    @BeforeClass
+    public void beforeClass() {
+
+    }
+
+	@BeforeMethod
+	public void beforeMethod() {
+
+	}"""
     
 tests_class = """package testClasses;
 
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.testng.annotations.*;
 import static org.testng.Assert.*;
 
 public class CLASS_NAMETest {
