@@ -1,8 +1,8 @@
 import re
 from copy import deepcopy
 
-import Regexs
-from JavaFunctionRepresentation import JavaFunctionRepresentation
+from Util import Regexs
+from Representations.JavaFunctionRepresentation import JavaFunctionRepresentation
 
 class JavaClassRepresentation:
     full_text = ""
@@ -141,10 +141,10 @@ class JavaClassRepresentation:
             4. Splits the text into lines, extracts functions, determines if the class is static, and extracts the name from the declaration.
         """
         
-        # part 1 - meant to circumvent python's default pointer system
-        self.classes = deepcopy(JavaClassRepresentation.classes)
-        self.functions = deepcopy(JavaClassRepresentation.functions)
-        self.full_lines = deepcopy(JavaClassRepresentation.full_lines)
+        # # part 1 - meant to circumvent python's default pointer system
+        # self.classes = deepcopy(JavaClassRepresentation.classes)
+        # self.functions = deepcopy(JavaClassRepresentation.functions)
+        # self.full_lines = deepcopy(JavaClassRepresentation.full_lines)
         
         # part 2 - getting the members from the paramaters
         self.full_text = full_text

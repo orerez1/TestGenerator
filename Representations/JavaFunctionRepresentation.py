@@ -1,11 +1,11 @@
 import re
-import Regexs
+from Util import Regexs
 
 class JavaFunctionRepresentation:
     full_text = ""  # The full text of the function
     return_type = ""  # The type of the function's returned value
-    params = {}  # Function parameters. The param's name would be the key and the value would be its type
-    exceptions_thrown = []  # The exceptions that the function declares it could throw
+    params = dict[str, str]  # Function parameters. The param's name would be the key and the value would be its type
+    exceptions_thrown = list[str]  # The exceptions that the function declares it could throw
     declaration = ""  # The function's declaration
     access_type = ""  # The function's access type (eg. public, private, protected)
     is_static = False  # Represents whether the java function is static 
@@ -22,9 +22,9 @@ class JavaFunctionRepresentation:
             full_text (str): The full text of the function
         """
 
-        # Part 1: Deep copying the lists and dictionaries so they'll get different pointers per instance
-        self.params = JavaFunctionRepresentation.params.copy()
-        self.exceptions_thrown = JavaFunctionRepresentation.exceptions_thrown.copy()
+        # # Part 1: Deep copying the lists and dictionaries so they'll get different pointers per instance
+        self.params = {}
+        self.exceptions_thrown = []
         
         # Part 2 Setting the parameters to the equivalent properties
         self.full_text = full_text
@@ -49,7 +49,7 @@ class JavaFunctionRepresentation:
         
         params = re.search(Regexs.find_parameters, self.declaration).group().split(", ")  # Extracting the parameters from the declaration
         try:
-            if params[0] is not '':  # The first parameter would be an empty string if the function doesn't receive parameters
+            if params[0] != '':  # The first parameter would be an empty string if the function doesn't receive parameters
                 for param in params:
                     broken_param = param.split(" ")  # Splitting the parameter into its type and name
                     self.params[broken_param[1]] = broken_param[0]  # Saving the parameter with its name as the key and its type as the value

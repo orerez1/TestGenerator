@@ -1,7 +1,7 @@
-import Config
-import Templates
-from JavaClassRepresentation import JavaClassRepresentation
-from JavaFunctionRepresentation import JavaFunctionRepresentation
+from Util import Config
+from Util import Templates
+from Representations.JavaClassRepresentation import JavaClassRepresentation
+from Representations.JavaFunctionRepresentation import JavaFunctionRepresentation
 
 import os
 
@@ -36,6 +36,19 @@ def create_standard_test(function_name: str, class_name: str, test_params: str):
     return function_tests
 
 
+def create_edge_case_test(func: JavaFunctionRepresentation, class_name: str, test_params: str):
+    # type: (JavaFunctionRepresentation, str, str) -> str
+    function_name = func.name
+    function_tests = ""
+    for param in func.params.keys:
+        for number in range(1, Config.number_of_edge_case_tests_per_function_parameter + 1):
+            function_tests += Templates.edge_case_test.replace("FUNCTION_IN_NAME", function_name[0].upper() + function_name[1:]).replace(
+                "FUNCTION", function_name).replace("TEST_NUMBER", str(number)).replace("CLASS_NAME", class_name).replace("\n\t\tPARAMS\n", "\n" + test_params).replace("PARAM_NAME", param[0].upper() + param)
+        function_tests += "\n\n"     
+    
+    return function_tests
+
+
 class TestCreator:
     project_name = ""
     full_text = ""
@@ -61,9 +74,9 @@ class TestCreator:
     # todo: documentation
 
     def create_test_classes_dir(self):
-        dir = Templates.separator + "test"
+        dir = Templates.separator + Templates.tests_folder_name
         path_to_dir, end_dir = Templates.path_to_test_classes.replace(
-            "PROJECT_NAME", self.project_name).split("dir" + Templates.separator)
+            "PROJECT_NAME", self.project_name).split(dir + Templates.separator)
         path_to_dir += dir
         end_dir = Templates.separator + \
             end_dir.split(Templates.separator + "CLASS_NAME")[0]
@@ -76,11 +89,11 @@ class TestCreator:
     # todo: documentation and code
     def create_file(self):
         self.create_test_classes_dir()
-        result = Templates.tests_class.replace("TESTS", self.create_tests).replace("BEFORE", Templates.before_test_function).replace(
+        result = Templates.tests_class.replace("TESTS", self.create_tests()).replace("BEFORE", Templates.before_test_function).replace(
             "TEAR_DOWN", Templates.tear_down_function).replace("CLASS_NAME", self.class_representation.name).replace("PROJECT_NAME", self.project_name.upper())
 
         folder = Templates.path_to_test_classes.replace("PROJECT_NAME", self.project_name).split(
-            "/CLASS_NAME")[0]
+            Templates.separator + "CLASS_NAME")[0]
         
         if not os.path.exists(folder):
             os.mkdir(folder)
