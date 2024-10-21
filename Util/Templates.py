@@ -12,29 +12,29 @@ tests_folder_name = "tests"
 path_param = test_class_path
 idea_projects_path = path_param.split("IdeaProjects" + separator)[0] + "IdeaProjects" + separator
 path_to_project = idea_projects_path + "PROJECT_NAME" + separator
-path_to_test_classes = path_to_project + tests_folder_name + separator + "testClasses" + separator + "CLASS_NAMETest.java"
+path_to_test_classes = path_to_project + tests_folder_name + separator + "CLASS_NAMETest.java"
 
 standard_test = """\t@Test
 \tpublic void testFUNCTION_IN_NAMEStandardTEST_NUMBER() {
-\t\tfinal String EXPECTED = ?;
+\t\tfinal RETURN_TYPE EXPECTED = ?;
 \t\tPARAMS
-\t\tfinal String RESULT = new CLASS_NAME().FUNCTION(SENDING_PARAMS);
+\t\tfinal RETURN_TYPE RESULT = new CLASS_NAME().FUNCTION(SENDING_PARAMS);
 \t\tassertEquals(EXPECTED, RESULT);
 \t}"""
 
 edge_case_test = """\t@Test
-\tpublic void testFUNCTION_IN_NAMENonStandardPARAM_NAMETEST_NUMBER() {
-\t\tfinal String EXPECTED = ?;
+\tpublic void testFUNCTION_IN_NAMEEdgeCasePARAM_NAMETEST_NUMBER() {
+\t\tfinal RETURN_TYPE EXPECTED = ?;
 \t\tPARAMS
-\t\tfinal String RESULT = new CLASS_NAME().FUNCTION(SENDING_PARAMS);
+\t\tfinal RETURN_TYPE RESULT = new CLASS_NAME().FUNCTION(SENDING_PARAMS);
 \t\tassertEquals(EXPECTED, RESULT);
 \t}"""
     
 null_case_test = """\t@Test
 \tpublic void testFUNCTION_IN_NAMENullParamTEST_NUMBER() {
-\t\tfinal String EXPECTED = ?;
+\t\tfinal RETURN_TYPE EXPECTED = ?;
 \t\tPARAMS
-\t\tfinal String RESULT = new CLASS_NAME().FUNCTION(SENDING_PARAMS);
+\t\tfinal RETURN_TYPE RESULT = new CLASS_NAME().FUNCTION(SENDING_PARAMS);
 \t\tassertEquals(EXPECTED, RESULT);
 \t}"""
     
@@ -62,9 +62,7 @@ before_test_function = """
 
 	}"""
     
-tests_class = """package testClasses;
-
-import org.testng.annotations.*;
+tests_class = """import org.testng.annotations.*;
 import static org.testng.Assert.*;
 
 public class CLASS_NAMETest {
