@@ -78,9 +78,7 @@ def create_standard_test(func: JavaFunctionRepresentation, class_name: str, test
     return function_tests[:-2]
 
 
-def create_edge_case_test(
-    func: JavaFunctionRepresentation, class_name: str, test_params: str
-):
+def create_edge_case_test(func: JavaFunctionRepresentation, class_name: str, test_params: str):
     # type: (JavaFunctionRepresentation, str, str) -> str
     function_name = capitalize_first_letter(func.name)
     function_tests = ""
