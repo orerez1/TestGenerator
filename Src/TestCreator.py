@@ -25,15 +25,22 @@ def create_test_params(func: JavaFunctionRepresentation):
         result += final_param_text if "\t\t" in final_param_text else "\t\t" + final_param_text
     return result
 
+def create_sending_params(test_params):
+    # type: (str) -> str
+    params = [param.split(" ")[2] for param in test_params.split(" = ") if "final" in param]
+        
+    return ", ".join(params)
+
 
 def create_standard_test(function_name: str, class_name: str, test_params: str):
     # type: (str, str, str) -> str
     function_tests = ""
     for number in range(1, Config.number_of_standard_tests_per_function + 1):
+        sending_params = create_sending_params(test_params=test_params)
         function_tests += Templates.standard_test.replace("FUNCTION_IN_NAME", function_name[0].upper() + function_name[1:]).replace(
-            "FUNCTION", function_name).replace("TEST_NUMBER", str(number)).replace("CLASS_NAME", class_name).replace("\n\t\tPARAMS\n", "\n" + test_params)
-    function_tests += "\n\n"
-    return function_tests
+            "FUNCTION", function_name).replace("TEST_NUMBER", str(number)).replace("CLASS_NAME", class_name).replace("\t\tPARAMS\n", test_params).replace("SENDING_PARAMS", sending_params)
+        function_tests += "\n\n"
+    return function_tests[:-2]
 
 
 def create_edge_case_test(func: JavaFunctionRepresentation, class_name: str, test_params: str):
