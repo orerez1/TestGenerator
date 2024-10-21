@@ -19,7 +19,7 @@ standard_test = """\t@Test
 \t\tfinal String EXPECTED = ?;
 \t\tPARAMS
 \t\tfinal String RESULT = new CLASS_NAME().FUNCTION(SENDING_PARAMS);
-\tassertEquals(EXPECTED, RESULT);
+\t\tassertEquals(EXPECTED, RESULT);
 \t}"""
 
 edge_case_test = """\t@Test
@@ -69,9 +69,7 @@ import static org.testng.Assert.*;
 
 public class CLASS_NAMETest {
     BEFORE
-    
     TEAR_DOWN
-    
     TESTS
 }
 """
