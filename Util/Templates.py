@@ -3,13 +3,16 @@ import sys
 # import os
 # idea_projects_path = os.getcwd()  # Example. fill with the path to your "IdeaProjects" directory
 
+test_class_path = 'C:\\Users\\orkin\\IdeaProjects\\Testing\\src\\Weird.java'
 
 os_name = platform.system().lower()
 separator = "\\" if os_name.__contains__("windows") else "/"   # Designed for Windows and Linux
-path_param = sys.argv[1]
-idea_projects_path = path_param[1].split("IdeaProjects" + separator)[0] + "IdeaProjects" + separator
-path_to_project = idea_projects_path + separator + "PROJECT_NAME" + separator
-path_to_test_classes = path_to_project + "testClasses" + separator + "CLASS_NAMETest.java"
+# path_param = sys.argv[1]
+tests_folder_name = "tests"
+path_param = test_class_path
+idea_projects_path = path_param.split("IdeaProjects" + separator)[0] + "IdeaProjects" + separator
+path_to_project = idea_projects_path + "PROJECT_NAME" + separator
+path_to_test_classes = path_to_project + tests_folder_name + separator + "testClasses" + separator + "CLASS_NAMETest.java"
 
 standard_test = """
     @Test
@@ -22,7 +25,7 @@ standard_test = """
 
 edge_case_test = """
     @Test
-    public void testFUNCTION_IN_NAMENonStandardTEST_NUMBER() {
+    public void testFUNCTION_IN_NAMENonStandardPARAM_NAMETEST_NUMBER() {
         final String EXPECTED = ?;
         PARAMS
         final String RESULT = new CLASS_NAME().FUNCTIONS(SENDING_PARAMS);
