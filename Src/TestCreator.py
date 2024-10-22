@@ -207,14 +207,12 @@ class TestCreator:
         This method constructs the directory path for test classes based on the project name and class name. It then checks if the directory already exists and creates it if not present.
         """
 
-        dir = Templates.separator + Templates.tests_folder_name
-        path_to_dir, end_dir = Templates.path_to_test_classes.replace(
+        directory = Templates.separator + Templates.tests_folder_name
+        path_to_dir, end_directory = Templates.path_to_test_classes.replace(
             "PROJECT_NAME", self.project_name
-        ).split(dir + Templates.separator)
-        path_to_dir += dir
-        end_dir = (
-            Templates.separator + end_dir.split(Templates.separator + "CLASS_NAME")[0]
-        )
+        ).split(directory + Templates.separator)
+        path_to_dir += directory
+        end_directory = f"{Templates.separator}{end_directory.split(f"{Templates.separator}CLASS_NAME")[0]}"
         if not os.path.exists(path_to_dir):
             os.mkdir(path_to_dir)
 
@@ -236,7 +234,7 @@ class TestCreator:
 
         folder = Templates.path_to_test_classes.replace(
             "PROJECT_NAME", self.project_name
-        ).split(Templates.separator + "CLASS_NAME")[0]
+        ).split(f"{Templates.separator}CLASS_NAME")[0]
 
         if not os.path.exists(folder):
             os.mkdir(folder)

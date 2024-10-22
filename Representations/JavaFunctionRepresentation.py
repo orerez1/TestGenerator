@@ -74,7 +74,7 @@ class JavaFunctionRepresentation:
                 declaration_parts.remove(declaration_parts[0])
                 self.return_type = declaration_parts[0]
                 if len(declaration_parts) >= 2 and declaration_parts[1].__contains__(">"):
-                    self.return_type += " " + declaration_parts[1]
+                    self.return_type += f" {declaration_parts[1]}"
                 break
         
         
@@ -85,7 +85,7 @@ class JavaFunctionRepresentation:
         """
         
         if "throws" in self.declaration:
-            exceptions = self.declaration.split("throws")[-1].split(", ")  # Seperating the exceptions list from the declaration
+            exceptions = self.declaration.split("throws")[-1].split(", ")  # Separating the exceptions list from the declaration
             exceptions[0] = exceptions[0].replace(' ', '')  # Removing an irrelevant space created in the separation process
             self.exceptions_thrown = exceptions
             
