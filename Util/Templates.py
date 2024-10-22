@@ -23,7 +23,7 @@ def create_standard_test(
     if function == "getInstance" or function == class_name:
         return ""
 
-    instance_call = f"{class_name}.getInstance" if is_singleton else f"new {class_name}()"
+    instance_call = f"{class_name}.getInstance" if is_singleton else f"new {class_name}"
 
     return f"""
 \t@Test
