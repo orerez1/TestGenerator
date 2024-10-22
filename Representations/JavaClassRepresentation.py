@@ -4,6 +4,19 @@ from copy import deepcopy
 from Util import Regexs
 from Representations.JavaFunctionRepresentation import JavaFunctionRepresentation
 
+
+def get_is_singleton(java_class):
+    try:
+        private_constructor = re.search(r'private\s+\w+\s*\(\)', java_class)
+        get_instance_method = re.search(r'static\s+\w+\s+getInstance\s*\(\)', java_class)
+        static_instance = re.search(r'private\s+static\s+\w+\s+\w+\s*;', java_class)
+    except Exception as e:
+        print(f"Error occurred: {e}")
+        return False
+
+    return bool(private_constructor and get_instance_method and static_instance)
+
+
 class JavaClassRepresentation:
     full_text = ""
     text = "" 
