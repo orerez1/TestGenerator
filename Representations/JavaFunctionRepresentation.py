@@ -2,6 +2,26 @@ import re
 from Util import Regexs
 
 class JavaFunctionRepresentation:
+    """
+    Represents a Java function and provides methods to extract its properties.
+
+    Attributes:
+        full_text (str): The full text of the Java function.
+        return_type (str): The type of the function's returned value.
+        params (dict[str, str]): Function parameters, where the key is the parameter name and the value is its type.
+        exceptions_thrown (list[str]): The exceptions that the function declares it could throw.
+        declaration (str): The function's declaration.
+        access_type (str): The function's access type (e.g. public, private, protected).
+        is_static (bool): Whether the Java function is static.
+        name (str): The name of the Java function.
+
+    Methods:
+        extract_params(): Extracts the function's parameters and saves them in the [params](cci:1://file:///c:/Users/orkin/OneDrive/Desktop/work/PythonProjects/TestGenerator/Representations/JavaFunctionRepresentation.py:12:4-26:20) attribute.
+        extract_function_types(): Extracts the function's return type and access type and saves them in the `return_type` and `access_type` attributes.
+        extract_exceptions(): Extracts the exceptions that the function declares it could throw and saves them in the `exceptions_thrown` attribute.
+        extract_name(): Extracts the function's name and saves it in the [name](cci:1://file:///c:/Users/orkin/OneDrive/Desktop/work/PythonProjects/TestGenerator/Representations/JavaFunctionRepresentation.py:72:4-78:65) attribute.
+    """
+    
     full_text = ""  # The full text of the function
     return_type = ""  # The type of the function's returned value
     params = dict[str, str]  # Function parameters. The param's name would be the key and the value would be its type
@@ -9,37 +29,7 @@ class JavaFunctionRepresentation:
     declaration = ""  # The function's declaration
     access_type = ""  # The function's access type (eg. public, private, protected)
     is_static = False  # Represents whether the java function is static 
-    name = ""  # The name of the java function
-
-
-    def __init__(self, full_text):
-        # type: (str)  -> None
-        """
-        An initiating function.
-        Divided into 3 parts
-
-        Args:
-            full_text (str): The full text of the function
-        """
-
-        # # Part 1: Deep copying the lists and dictionaries so they'll get different pointers per instance
-        self.params = {}
-        self.exceptions_thrown = []
-        
-        # Part 2 Setting the parameters to the equivalent properties
-        self.full_text = full_text
-        self.declaration = full_text.split('\n')[0].split('{')[0]
-        while self.declaration.__contains__('\t'):
-            self.declaration = self.declaration.replace('\t', '')
-        
-        # Part 3: Calling the methods that initialize the rest of the proerties based on the parameters received
-        self.extract_params()
-        self.extract_function_types()
-        self.extract_exceptions()
-        self.extract_name()
-        pass
-            
-              
+    name = ""  # The name of the java function      
     def extract_params(self):
         """
         This function extracts the parameters given to the function,
@@ -60,9 +50,9 @@ class JavaFunctionRepresentation:
     def extract_function_types(self):
         """
         This function extracts the following pieces of information from a function's declaration and saves it into the mentioned members:
-         - Whether the function is static -> "is_static"
-         - Access type (public|private|protected) -> "access_type"
-         - The type of the function's return value -> "return_type"
+        - Whether the function is static -> "is_static"
+        - Access type (public|private|protected) -> "access_type"
+        - The type of the function's return value -> "return_type"
         """
         declaration_parts = self.declaration.split(" ")
         while declaration_parts.__contains__(''):  # There could be irrelevant spaces in the declaration which'll result in empty elements
@@ -107,3 +97,28 @@ class JavaFunctionRepresentation:
         """
         
         self.name = self.declaration.split("(")[0].split(" ")[-1]
+        
+    def __init__(self, full_text: str) -> None:
+        """
+        An initiating function.
+        Divided into 3 parts
+
+        Args:
+            full_text (str): The full text of the function
+        """
+
+        # # Part 1: Deep copying the lists and dictionaries so they'll get different pointers per instance
+        self.params = {}
+        self.exceptions_thrown = []
+        
+        # Part 2 Setting the parameters to the equivalent properties
+        self.full_text = full_text
+        self.declaration = full_text.split('\n')[0].split('{')[0]
+        while self.declaration.__contains__('\t'):
+            self.declaration = self.declaration.replace('\t', '')
+        
+        # Part 3: Calling the methods that initialize the rest of the properties based on the parameters received
+        self.extract_params()
+        self.extract_function_types()
+        self.extract_exceptions()
+        self.extract_name()

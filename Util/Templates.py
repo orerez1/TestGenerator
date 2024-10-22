@@ -16,9 +16,29 @@ path_to_test_classes = path_to_project + tests_folder_name + separator + "CLASS_
 
 
 def create_standard_test(
-    function_in_name, test_number, return_type,
-    class_name, function, sending_params,
-    params, is_singleton):
+    function_in_name: str, test_number: str, return_type: str,
+    class_name: str, function: str, sending_params: str,
+    params: str, is_singleton: bool) -> str:
+    """
+    Generates a standard test template for a given Java function.
+
+    Args:
+        function_in_name (str): The name of the function, capitalized for test method naming.
+        test_number (str): A unique identifier for the test.
+        return_type (str): The return type of the function being tested.
+        class_name (str): The name of the class containing the function.
+        function (str): The name of the function being tested.
+        sending_params (str): The parameters to be passed to the function during the test.
+        params (str): Additional test parameters.
+        is_singleton (bool): Indicates if the class is a Singleton.
+
+    Returns:
+        str: A formatted Java test method as a string.
+
+    Notes:
+        - If the function is "getInstance" or the same as the class name, an empty string is returned.
+        - Handles both Singleton and non-Singleton class instantiation.
+    """
 
     if function == "getInstance" or function == class_name:
         return ""
@@ -36,9 +56,30 @@ def create_standard_test(
 
 
 def create_edge_case_test(
-    function_in_name, param_name, test_number,
-    return_type, class_name, function,
-    sending_params, params, is_singleton):
+    function_in_name: str, param_name: str, test_number: str,
+    return_type: str, class_name: str, function: str,
+    sending_params: str, params: str, is_singleton: bool) -> str:
+    """
+    Generates an edge case test template for a given Java function.
+
+    Args:
+        function_in_name (str): The name of the function, capitalized for test method naming.
+        param_name (str): The name of the parameter associated with the edge case.
+        test_number (str): A unique identifier for the test.
+        return_type (str): The return type of the function being tested.
+        class_name (str): The name of the class containing the function.
+        function (str): The name of the function being tested.
+        sending_params (str): The parameters to be passed to the function during the test.
+        params (str): Additional test parameters.
+        is_singleton (bool): Indicates if the class is a Singleton.
+
+    Returns:
+        str: A formatted Java test method as a string.
+
+    Notes:
+        - If the function is "getInstance" or the same as the class name, an empty string is returned.
+        - Handles both Singleton and non-Singleton class instantiation.
+    """
 
     if function == "getInstance" or function == class_name:
         return ""

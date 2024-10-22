@@ -5,7 +5,16 @@ from Util import Regexs
 from Representations.JavaFunctionRepresentation import JavaFunctionRepresentation
 
 
-def get_is_singleton(java_class):
+def get_is_singleton(java_class: str) -> bool:
+    """
+    Checks if a given Java class is a Singleton.
+
+    Args:
+        java_class (str): The Java class to check.
+
+    Returns:
+        bool: Whether the class is a Singleton or not.
+    """
     try:
         private_constructor = re.search(Regexs.find_private_constructor, java_class)
         get_instance_method = re.search(Regexs.find_get_instance_method, java_class)
@@ -17,7 +26,27 @@ def get_is_singleton(java_class):
     return bool(private_constructor and get_instance_method and static_instance)
 
 
+# This class represents a Java class in Python.
 class JavaClassRepresentation:
+    """
+    Represents a Java class and provides methods to extract its properties.
+
+    Attributes:
+        full_text (str): The full text of the Java class.
+        text (str): The text of the Java class without nested classes.
+        classes (list): A list of nested classes.
+        functions (list[JavaFunctionRepresentation]): A list of functions in the Java class.
+        full_lines (list[str]): A list of lines in the full text of the Java class.
+        is_static (bool): Whether the Java class is static.
+        name (str): The name of the Java class.
+        declaration (str): The declaration of the Java class.
+        is_singleton (bool): Whether the Java class is a Singleton.
+
+    Methods:
+        form_lines(lines: list) -> str: Concatenates a list of lines into a single string with each line separated by a newline character.
+        remove_nested_classes(class_text: str, class_list: list) -> str: Removes the nested classes specified in the class_list from the given class_text.
+    """
+    
     full_text = ""
     text = "" 
     classes: list
@@ -29,8 +58,7 @@ class JavaClassRepresentation:
     is_singleton = False
     
     @staticmethod
-    def form_lines(lines: list):
-        # type: (list)  -> str
+    def form_lines(lines: list) -> str:
         """
             Concatenates a list of lines into a single string with each line separated by a newline character.
 
@@ -47,8 +75,7 @@ class JavaClassRepresentation:
         return result
     
     @staticmethod
-    def remove_nested_classes(class_text: str, class_list: list):
-        # type: (str, list)  -> str
+    def remove_nested_classes(class_text: str, class_list: list) -> str:
         """
             Removes the nested classes specified in the class_list from the given class_text.
 
@@ -62,10 +89,8 @@ class JavaClassRepresentation:
         
         for c in class_list:
             class_text = class_text.replace(c, "")
-        return class_text
-             
-    def extract_declaration(self):
-        # type: ()  -> None
+        return class_text     
+    def extract_declaration(self) -> None:
         """
             Extracts the class declaration line from the full lines of the JavaClassRepresentation object.
 
@@ -76,8 +101,7 @@ class JavaClassRepresentation:
                 self.declaration = line
                 break
     
-    def extract_classes(self):
-        # type: ()  -> None
+    def extract_classes(self) -> None:
         """
             Extracts nested classes from the full text of the JavaClassRepresentation object.
 
@@ -101,8 +125,7 @@ class JavaClassRepresentation:
             for line in self.full_lines[declaration_index:]:
                 self.text += line + "\n"
     
-    def extract_functions(self):
-        # type: ()  -> None
+    def extract_functions(self) -> None:
         """
             Extracts functions from the JavaClassRepresentation object's text.
 
@@ -126,8 +149,7 @@ class JavaClassRepresentation:
                     print("Indentation error found in the closing bracket of the \"" + declaration.split("(")[0].split(" ")[-1] + "\" function.")
                     print("This function will be ignored as a result")
     
-    def extract_name_from_declaration(self, declaration: str):
-        # type: (str)  -> None
+    def extract_name_from_declaration(self, declaration: str) -> None:
         """
             Extracts the name from the given declaration string.
 
@@ -137,33 +159,25 @@ class JavaClassRepresentation:
             Returns:
             - None
         """
+        
         declaration_parts = declaration.split(" ")
         while '' in declaration_parts:
             declaration_parts.remove('')
         name_index = 2 if 'static' not in declaration_parts else 3
         self.name = declaration_parts[name_index]
         
-    def __init__(self, full_text: str):
-        # type: (str)  -> None
+    def __init__(self, full_text: str) -> None:
         """
-            Initialize the JavaClassRepresentation object with the provided full_text.
+            Initializes a JavaClassRepresentation object with the provided full text of the Java class.
 
-            This method performs the following steps:
-            1. Initializes classes, functions, and full_lines attributes by deep copying the respective attributes from JavaClassRepresentation.
-            2. Sets the full_text attribute to the input full_text.
-            3. Splits the full_text into lines and extracts the class declaration and classes.
-            4. Splits the text into lines, extracts functions, determines if the class is static, and extracts the name from the declaration.
+            Parameters:
+            - full_text (str): The full text of the Java class.
         """
         
-        # # part 1 - meant to circumvent python's default pointer system
-        # self.classes = deepcopy(JavaClassRepresentation.classes)
-        # self.functions = deepcopy(JavaClassRepresentation.functions)
-        # self.full_lines = deepcopy(JavaClassRepresentation.full_lines)
-        
-        # part 2 - getting the members from the paramaters
+        # part 1 - getting the members from the parameters
         self.full_text = full_text
         
-        # part 3 - calling setup functions that others depend on
+        # part 2 - calling setup functions that others depend on
         self.full_lines = self.full_text.split('\n')
         self.extract_declaration()
         self.extract_classes()
