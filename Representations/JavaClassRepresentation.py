@@ -182,7 +182,7 @@ class JavaClassRepresentation:
         self.extract_classes()
         self.is_singleton = get_is_singleton(full_text)
         
-        # part 4 - calling initiating functions that depend on previous functions
+        # part 3 - calling initiating functions that depend on previous functions
         self.lines = self.text.split('\n')
         self.extract_functions()
         self.is_static = 'static' in self.declaration.split(" ")

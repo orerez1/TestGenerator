@@ -10,7 +10,8 @@ separator = "\\" if os_name.__contains__("windows") else "/"   # Designed for Wi
 # path_param = sys.argv[1]
 tests_folder_name = "tests"
 path_param = test_class_path
-idea_projects_path = path_param.split(f"IdeaProjects{separator}")[0] + f"IdeaProjects{separator}"
+idea_projects_path = f"{path_param.split(f'IdeaProjects{separator}')[0]}IdeaProjects{separator}"
+
 path_to_project = f"{idea_projects_path}PROJECT_NAME{separator}"
 path_to_test_classes = path_to_project + tests_folder_name + separator + "CLASS_NAMETest.java"
 

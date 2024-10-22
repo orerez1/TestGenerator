@@ -5,7 +5,7 @@ from Util import Templates
 print("1. System arguments:")
 print(sys.argv)
 print("\n")
-test_class_path = 'C:\\Users\\orkin\\IdeaProjects\\Testing\\src\\Weird.java'
+test_class_path = 'C:\\Users\\orkin\\IdeaProjects\\Testing\\src\\Exampleton .java'
 if True or sys.argv.__len__() > 1:
     # path_param = sys.argv[1]
     path_param = test_class_path
@@ -17,7 +17,6 @@ if True or sys.argv.__len__() > 1:
     print(path)
     print("\n")
     try:
-        # f = open(path_param, 'r')
         with open(path_param, 'r') as f:
             class_full_text = f.read()
         print("4. Class full text:")

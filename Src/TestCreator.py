@@ -212,7 +212,7 @@ class TestCreator:
             "PROJECT_NAME", self.project_name
         ).split(directory + Templates.separator)
         path_to_dir += directory
-        end_directory = f"{Templates.separator}{end_directory.split(f"{Templates.separator}CLASS_NAME")[0]}"
+        end_directory = f"{Templates.separator}" + end_directory.split(f"{Templates.separator}CLASS_NAME")[0]
         if not os.path.exists(path_to_dir):
             os.mkdir(path_to_dir)
 
