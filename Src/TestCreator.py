@@ -6,6 +6,7 @@ from Representations.JavaFunctionRepresentation import JavaFunctionRepresentatio
 
 import os
 
+
 def capitalize_first_letter(text: str) -> str:
     """
     Capitalize the first letter of a given text.
@@ -20,23 +21,24 @@ def capitalize_first_letter(text: str) -> str:
         return text
     return text[0].upper() + text[1:]
 
-def create_test_params(func: JavaFunctionRepresentation) -> str:
+
+def create_test_parameters(java_function: JavaFunctionRepresentation) -> str:
     """
     Create test parameters based on the JavaFunctionRepresentation object.
 
     Args:
-        func (JavaFunctionRepresentation): An object representing a Java function.
+        java_function (JavaFunctionRepresentation): An object representing a Java function.
 
     Returns:
-        result (str): A string containing the final test parameters based on the function's parameters.
+        str: A string containing the final test parameters based on the function's parameters.
     """
 
     result = ""
-    for param in func.params.keys():
+    for parameter_name in java_function.params.keys():
         final_param_text = (
             Templates.final_param_for_test.replace(
-                "PARAM_TYPE", func.params[param]
-            ).replace("PARAM_NAME", param)
+                "PARAM_TYPE", java_function.params[parameter_name]
+            ).replace("PARAM_NAME", parameter_name)
             + "\n"
         )
         result += (
@@ -65,7 +67,12 @@ def create_sending_params(test_params: str) -> str:
     return ", ".join(params)
 
 
-def create_standard_tests_for_function(func: JavaFunctionRepresentation, class_name: str, test_params: str, is_singleton: bool) -> str:
+def create_standard_tests_for_function(
+    func: JavaFunctionRepresentation,
+    class_name: str,
+    test_params: str,
+    is_singleton: bool,
+) -> str:
     """
     Generates multiple standard test templates for a Java function.
 
@@ -91,13 +98,16 @@ def create_standard_tests_for_function(func: JavaFunctionRepresentation, class_n
             function=func.name,
             sending_params=sending_params,
             params=test_params,
-            is_singleton=is_singleton
+            is_singleton=is_singleton,
         )
     return function_tests
 
 
 def create_edge_case_test_for_function(
-    func: JavaFunctionRepresentation, class_name: str, test_params: str, is_singleton: bool
+    func: JavaFunctionRepresentation,
+    class_name: str,
+    test_params: str,
+    is_singleton: bool,
 ) -> str:
     """
     Generates edge case test templates for a Java function.
@@ -111,16 +121,15 @@ def create_edge_case_test_for_function(
     Returns:
         str: A string containing formatted Java test methods.
     """
-    
+
     function_name = capitalize_first_letter(func.name)
     function_tests = ""
     for param in func.params.keys():
-        # Iterate over each parameter of the function by their name
-        for number in range(1, Config.number_of_edge_case_tests_per_function_parameter + 1):
-            # Preparing calculated parameters
+        for number in range(
+            1, Config.number_of_edge_case_tests_per_function_parameter + 1
+        ):
             param_name = capitalize_first_letter(param)
             sending_params = create_sending_params(test_params=test_params)
-            # Generate the test template for the parameter
             function_tests += Templates.create_edge_case_test(
                 function_in_name=function_name,
                 param_name=param_name,
@@ -130,7 +139,7 @@ def create_edge_case_test_for_function(
                 function=func.name,
                 sending_params=sending_params,
                 params=test_params,
-                is_singleton=is_singleton
+                is_singleton=is_singleton,
             )
 
     return function_tests
@@ -166,44 +175,29 @@ class TestCreator:
             str: A string containing formatted test templates for standard and edge case tests.
         """
 
-        # Initialize the tests string to store the generated test templates
         tests = ""
-
-        # Iterate over each function in the Java class representation
         for func in self.class_representation.functions:
-            # Create the test parameters string
-            test_params = create_test_params(func=func)
-
-            # Check if the function return type is not void
+            test_params = create_test_parameters(java_function=func)
             if func.return_type != "void":
-                # Generate standard tests for the function
                 test = create_standard_tests_for_function(
                     func=func,
                     class_name=self.class_representation.name,
                     test_params=test_params,
-                    is_singleton=self.class_representation.is_singleton
+                    is_singleton=self.class_representation.is_singleton,
                 )
-                # Add the generated standard tests to the tests string
                 tests += test
 
-        # Iterate over each function in the Java class representation again
         for func in self.class_representation.functions:
-            # Create the test parameters string
-            test_params = create_test_params(func=func)
-
-            # Check if the function return type is not void
+            test_params = create_test_parameters(java_function=func)
             if func.return_type != "void":
-                # Generate edge case tests for the function
                 test = create_edge_case_test_for_function(
                     func=func,
                     class_name=self.class_representation.name,
                     test_params=test_params,
-                    is_singleton=self.class_representation.is_singleton
+                    is_singleton=self.class_representation.is_singleton,
                 )
-                # Add the generated edge case tests to the tests string
                 tests += test
 
-        # Return the concatenated tests string
         return tests
 
     def create_test_classes_dir(self) -> None:
@@ -223,7 +217,6 @@ class TestCreator:
         )
         if not os.path.exists(path_to_dir):
             os.mkdir(path_to_dir)
-
 
     def create_file(self) -> None:
         """
