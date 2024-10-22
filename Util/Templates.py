@@ -10,10 +10,22 @@ separator = "\\" if os_name.__contains__("windows") else "/"   # Designed for Wi
 # path_param = sys.argv[1]
 tests_folder_name = "tests"
 path_param = test_class_path
-idea_projects_path = path_param.split(r"IdeaProjects{separator}")[0] + r"IdeaProjects{separator}"
+idea_projects_path = path_param.split(f"IdeaProjects{separator}")[0] + f"IdeaProjects{separator}"
 path_to_project = f"{idea_projects_path}PROJECT_NAME{separator}"
 path_to_test_classes = path_to_project + tests_folder_name + separator + "CLASS_NAMETest.java"
 
+def get_instance_call(class_name: str, is_singleton: bool) -> str:
+    """
+    Returns the instance call for a given class name.
+
+    Args:
+        class_name (str): The name of the class.
+        is_singleton (bool): Indicates if the class is a Singleton.
+
+    Returns:
+        str: The instance call for the given class name.
+    """
+    return f"{class_name}.getInstance" if is_singleton else f"new {class_name}"
 
 def create_standard_test(
     function_in_name: str, test_number: str, return_type: str,
@@ -44,14 +56,12 @@ def create_standard_test(
     if java_function in ["getInstance", class_name]:
         return ""
 
-    instance_call = f"{class_name}.getInstance" if is_singleton else f"new {class_name}"
-
     return f"""
 \t@Test
 \tpublic void test{function_in_name}Standard{test_number}() {{
 \t\tfinal {return_type} EXPECTED = ?;
 {params}
-\t\tfinal {return_type} RESULT = {instance_call}().{java_function}({sending_params});
+\t\tfinal {return_type} RESULT = {get_instance_call(class_name, is_singleton)}().{java_function}({sending_params});
 \t\tassertEquals(EXPECTED, RESULT);
 \t}}\n"""
 
@@ -86,14 +96,12 @@ def create_edge_case_test(
     if java_function in ["getInstance", class_name]:
         return ""
     
-    instance_call = f"{class_name}.getInstance" if is_singleton else f"new {class_name}"
-
     return f"""
 \t@Test
 \tpublic void test{function_in_name}EdgeCase{param_name}{test_number}() {{
 \t\tfinal {return_type} EXPECTED = ?;
 {params}
-\t\tfinal {return_type} RESULT = {instance_call}().{java_function}({sending_params});
+\t\tfinal {return_type} RESULT = {get_instance_call(class_name, is_singleton)}().{java_function}({sending_params});
 \t\tassertEquals(EXPECTED, RESULT);
 \t}}\n"""
 
