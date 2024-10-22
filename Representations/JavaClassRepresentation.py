@@ -7,9 +7,9 @@ from Representations.JavaFunctionRepresentation import JavaFunctionRepresentatio
 
 def get_is_singleton(java_class):
     try:
-        private_constructor = re.search(r'private\s+\w+\s*\(\)', java_class)
-        get_instance_method = re.search(r'static\s+\w+\s+getInstance\s*\(\)', java_class)
-        static_instance = re.search(r'private\s+static\s+\w+\s+\w+\s*;', java_class)
+        private_constructor = re.search(Regexs.find_private_constructor, java_class)
+        get_instance_method = re.search(Regexs.find_get_instance_method, java_class)
+        static_instance = re.search(Regexs.find_static_instance, java_class)
     except Exception as e:
         print(f"Error occurred: {e}")
         return False
