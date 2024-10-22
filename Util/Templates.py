@@ -17,7 +17,7 @@ path_to_test_classes = path_to_project + tests_folder_name + separator + "CLASS_
 
 def create_standard_test(
     function_in_name: str, test_number: str, return_type: str,
-    class_name: str, function: str, sending_params: str,
+    class_name: str, java_function: str, sending_params: str,
     params: str, is_singleton: bool) -> str:
     """
     Generates a standard test template for a given Java function.
@@ -40,7 +40,8 @@ def create_standard_test(
         - Handles both Singleton and non-Singleton class instantiation.
     """
 
-    if function == "getInstance" or function == class_name:
+    # returns an empty string if the function is "getInstance" or the same as the class name because we don't want to test constructors
+    if java_function in ["getInstance", class_name]:
         return ""
 
     instance_call = f"{class_name}.getInstance" if is_singleton else f"new {class_name}"
@@ -50,14 +51,14 @@ def create_standard_test(
 \tpublic void test{function_in_name}Standard{test_number}() {{
 \t\tfinal {return_type} EXPECTED = ?;
 {params}
-\t\tfinal {return_type} RESULT = {instance_call}().{function}({sending_params});
+\t\tfinal {return_type} RESULT = {instance_call}().{java_function}({sending_params});
 \t\tassertEquals(EXPECTED, RESULT);
 \t}}\n"""
 
 
 def create_edge_case_test(
     function_in_name: str, param_name: str, test_number: str,
-    return_type: str, class_name: str, function: str,
+    return_type: str, class_name: str, java_function: str,
     sending_params: str, params: str, is_singleton: bool) -> str:
     """
     Generates an edge case test template for a given Java function.
@@ -81,7 +82,8 @@ def create_edge_case_test(
         - Handles both Singleton and non-Singleton class instantiation.
     """
 
-    if function == "getInstance" or function == class_name:
+    # returns an empty string if the function is "getInstance" or the same as the class name because we don't want to test constructors
+    if java_function in ["getInstance", class_name]:
         return ""
     
     instance_call = f"{class_name}.getInstance" if is_singleton else f"new {class_name}"
@@ -91,7 +93,7 @@ def create_edge_case_test(
 \tpublic void test{function_in_name}EdgeCase{param_name}{test_number}() {{
 \t\tfinal {return_type} EXPECTED = ?;
 {params}
-\t\tfinal {return_type} RESULT = {instance_call}().{function}({sending_params});
+\t\tfinal {return_type} RESULT = {instance_call}().{java_function}({sending_params});
 \t\tassertEquals(EXPECTED, RESULT);
 \t}}\n"""
 
