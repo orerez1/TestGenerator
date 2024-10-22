@@ -17,9 +17,9 @@ def capitalize_first_letter(text: str) -> str:
     Returns:
         str: The capitalized text.
     """
-    if not text:
-        return text
-    return text[0].upper() + text[1:]
+    
+    # if the text is None or empty, return it as is
+    return text[0].upper() + text[1:] if text else text
 
 
 def create_test_parameters(java_function: JavaFunctionRepresentation) -> str:
