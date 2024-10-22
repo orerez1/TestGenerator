@@ -14,6 +14,39 @@ idea_projects_path = path_param.split("IdeaProjects" + separator)[0] + "IdeaProj
 path_to_project = idea_projects_path + "PROJECT_NAME" + separator
 path_to_test_classes = path_to_project + tests_folder_name + separator + "CLASS_NAMETest.java"
 
+
+def create_standard_test(
+    function_in_name, test_number, return_type,
+    class_name, function, sending_params,
+    params, is_singleton):
+    
+    instance_call = f"{class_name}.getInstance" if is_singleton else f"new {class_name}()"
+
+    return f"""\t@Test
+\tpublic void test{function_in_name}Standard{test_number}() {{
+\t\tfinal {return_type} EXPECTED = ?;
+{params}
+\t\tfinal {return_type} RESULT = new {instance_call}().{function}({sending_params});
+\t\tassertEquals(EXPECTED, RESULT);
+\t}}"""
+
+
+def create_edge_case_test(
+    function_in_name, param_name, test_number,
+    return_type,class_name, function,
+    sending_params, params, is_singleton):
+
+    instance_call = f"{class_name}.getInstance" if is_singleton else f"new {class_name}"
+
+    return f"""\t@Test
+    public void test{function_in_name}EdgeCase{param_name}{test_number}() {{
+        final {return_type} EXPECTED = ?;
+        {params}
+        final {return_type} RESULT = new {instance_call}().{function}({sending_params});
+        assertEquals(EXPECTED, RESULT);
+    }}"""
+
+
 standard_test = """\t@Test
 \tpublic void testFUNCTION_IN_NAMEStandardTEST_NUMBER() {
 \t\tfinal RETURN_TYPE EXPECTED = ?;
