@@ -12,19 +12,16 @@ if True or sys.argv.__len__() > 1:
     print("2. Isolated class path:")
     print(path_param)
     print("\n")
-    path = path_param.split("IdeaProjects" + Templates.separator)[1].split(Templates.separator)
+    path = path_param.split(f"IdeaProjects{Templates.separator}")[1].split(Templates.separator)
     print("3. Broken param:")
     print(path)
     print("\n")
     try:
-        f = open(path_param, 'r')
-        class_full_text = f.read()
-        f.close()
+        # f = open(path_param, 'r')
+        with open(path_param, 'r') as f:
+            class_full_text = f.read()
         print("4. Class full text:")
-        print(class_full_text)
-       
-        
-
+        print(class_full_text)         
     except Exception as e:
         print(e)
 
