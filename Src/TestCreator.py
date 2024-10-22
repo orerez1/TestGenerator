@@ -57,50 +57,48 @@ def create_sending_params(test_params):
     return ", ".join(params)
 
 
-def create_standard_test(func: JavaFunctionRepresentation, class_name: str, test_params: str):
-    # type: (JavaFunctionRepresentation, str, str) -> str
+def create_standard_test(func: JavaFunctionRepresentation, class_name: str, test_params: str, is_singleton: bool):
+    # type: (JavaFunctionRepresentation, str, str, bool) -> str
     function_name = capitalize_first_letter(func.name)
     function_tests = ""
     for number in range(1, Config.number_of_standard_tests_per_function + 1):
         sending_params = create_sending_params(test_params=test_params)
-        function_tests += (
-            Templates.standard_test.replace(
-                "FUNCTION_IN_NAME", capitalize_first_letter(function_name)
-            )
-            .replace("FUNCTION", func.name)
-            .replace("TEST_NUMBER", str(number))
-            .replace("CLASS_NAME", class_name)
-            .replace("\t\tPARAMS\n", test_params)
-            .replace("SENDING_PARAMS", sending_params)
-            .replace("RETURN_TYPE", func.return_type)
+        function_tests += Templates.create_standard_test(
+            function_in_name=function_name,
+            test_number=number,
+            return_type=func.return_type,
+            class_name=class_name,
+            function=func.name,
+            sending_params=sending_params,
+            params=test_params,
+            is_singleton=is_singleton
         )
-        function_tests += "\n\n"
-    return function_tests[:-2]
+    return function_tests
 
 
 def create_edge_case_test(
-    func: JavaFunctionRepresentation, class_name: str, test_params: str
+    func: JavaFunctionRepresentation, class_name: str, test_params: str, is_singleton: bool
 ):
-    # type: (JavaFunctionRepresentation, str, str) -> str
+    # type: (JavaFunctionRepresentation, str, str, bool) -> str
     function_name = capitalize_first_letter(func.name)
     function_tests = ""
     for param in func.params.keys():
         for number in range(1, Config.number_of_edge_case_tests_per_function_parameter + 1):
             param_name = capitalize_first_letter(param)
             sending_params = create_sending_params(test_params=test_params)
-            function_tests += (
-                Templates.edge_case_test.replace("FUNCTION_IN_NAME", function_name)
-                .replace("FUNCTION", func.name)
-                .replace("TEST_NUMBER", str(number))
-                .replace("CLASS_NAME", class_name)
-                .replace("\n\t\tPARAMS\n", "\n" + test_params)
-                .replace("PARAM_NAME", param_name)
-                .replace("SENDING_PARAMS", sending_params)
-                .replace("RETURN_TYPE", func.return_type)
-                + "\n\n"
-                )
+            function_tests += Templates.create_edge_case_test(
+                function_in_name=function_name,
+                param_name=param_name,
+                test_number=number,
+                return_type=func.return_type,
+                class_name=class_name,
+                function=func.name,
+                sending_params=sending_params,
+                params=test_params,
+                is_singleton=is_singleton
+            )
 
-    return function_tests[:-2]
+    return function_tests
 
 
 class TestCreator:
@@ -112,7 +110,6 @@ class TestCreator:
 
     def create_tests(self):
         tests = ""
-        first = True
         for func in self.class_representation.functions:
             test_params = create_test_params(func=func)
             if func.return_type != "void":
@@ -120,14 +117,10 @@ class TestCreator:
                     func=func,
                     class_name=self.class_representation.name,
                     test_params=test_params,
+                    is_singleton=self.class_representation.is_singleton
                 )
-                if not first:
-                    test = "\n" + test
-                else:
-                    first = False
-                tests += "\n" + test
+                tests += test
 
-        first = True
         for func in self.class_representation.functions:
             test_params = create_test_params(func=func)
             if func.return_type != "void":
@@ -135,12 +128,9 @@ class TestCreator:
                     func=func,
                     class_name=self.class_representation.name,
                     test_params=test_params,
+                    is_singleton=self.class_representation.is_singleton
                 )
-                if not first:
-                    test = "\n" + test
-                else:
-                    first = False
-                tests += "\n" + test
+                tests += test
 
         
         return tests
