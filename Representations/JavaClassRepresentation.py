@@ -1,5 +1,4 @@
 import re
-from copy import deepcopy
 
 from Util import Regexs
 from Representations.JavaFunctionRepresentation import JavaFunctionRepresentation
