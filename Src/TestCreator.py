@@ -241,6 +241,17 @@ class TestCreator:
                 )
                 tests += test
 
+        for func in self.class_representation.functions:
+            test_params = create_test_parameters(java_function=func)
+            if func.return_type != "void":
+                test = create_null_edge_case_test_for_function(
+                    func=func,
+                    class_name=self.class_representation.name,
+                    test_params=test_params,
+                    is_singleton=self.class_representation.is_singleton,
+                )
+                tests += test
+
         return tests
 
     def create_test_classes_dir(self) -> None:
@@ -255,7 +266,7 @@ class TestCreator:
             "PROJECT_NAME", self.project_name
         ).split(directory + Templates.separator)
         path_to_dir += directory
-        end_directory = f"{Templates.separator}" + end_directory.split(f"{Templates.separator}CLASS_NAME")[0]
+        end_directory = f"{Templates.separator}{end_directory.split(f'{Templates.separator}CLASS_NAME')[0]}"
         if not os.path.exists(path_to_dir):
             os.mkdir(path_to_dir)
 
