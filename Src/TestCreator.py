@@ -144,12 +144,55 @@ def create_edge_case_test_for_function(
 
     return function_tests
 
+def create_null_edge_case_test_for_function(
+    func: JavaFunctionRepresentation,
+    class_name: str,
+    test_params: str,
+    is_singleton: bool,
+) -> str:
+    """
+    Generates edge case test templates for a Java function.
+
+    Args:
+        func (JavaFunctionRepresentation): The Java function representation object.
+        class_name (str): The name of the class containing the function.
+        test_params (str): A string containing test parameters.
+        is_singleton (bool): Indicates if the class is a Singleton.
+
+    Returns:
+        str: A string containing formatted Java test methods.
+    """
+
+    function_name = capitalize_first_letter(func.name)
+    function_tests = ""
+    for param_name, param_type  in func.params.items():
+        for number in range(
+            1, Config.number_of_null_case_tests_per_function_parameter + 1
+        ):
+            param_name = capitalize_first_letter(param_name)
+            sending_params = create_sending_params(test_params=test_params)
+            function_tests += Templates.create_null_edge_case_test(
+                function_in_name=function_name,
+                param_name=param_name,
+                test_number=number,
+                return_type=func.return_type,
+                class_name=class_name,
+                java_function=func.name,
+                sending_params=sending_params,
+                params=test_params,
+                is_singleton=is_singleton,
+                param_type=param_type
+            )
+
+    return function_tests
+
 
 class TestCreator:
     """
     Creates test cases and test classes for a Java class.
 
-    This class provides methods to generate standard and edge case test templates for each function in the Java class representation. It also handles the creation of test classes directories and test files.
+    This class provides methods to generate standard and edge case test templates for each function in the Java class representation.
+    It also handles the creation of test classes directories and test files.
 
     Attributes:
         project_name (str): The name of the project.
@@ -198,6 +241,17 @@ class TestCreator:
                 )
                 tests += test
 
+        for func in self.class_representation.functions:
+            test_params = create_test_parameters(java_function=func)
+            if func.return_type != "void":
+                test = create_null_edge_case_test_for_function(
+                    func=func,
+                    class_name=self.class_representation.name,
+                    test_params=test_params,
+                    is_singleton=self.class_representation.is_singleton,
+                )
+                tests += test
+
         return tests
 
     def create_test_classes_dir(self) -> None:
@@ -212,7 +266,7 @@ class TestCreator:
             "PROJECT_NAME", self.project_name
         ).split(directory + Templates.separator)
         path_to_dir += directory
-        end_directory = f"{Templates.separator}" + end_directory.split(f"{Templates.separator}CLASS_NAME")[0]
+        end_directory = f"{Templates.separator}{end_directory.split(f'{Templates.separator}CLASS_NAME')[0]}"
         if not os.path.exists(path_to_dir):
             os.mkdir(path_to_dir)
 
