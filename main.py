@@ -5,7 +5,7 @@ from Util import Templates
 print("1. System arguments:")
 print(sys.argv)
 print("\n")
-test_class_path = 'C:\\Users\\orkin\\IdeaProjects\\Testing\\src\\Exampleton .java'
+test_class_path = Templates.test_class_path
 if True or sys.argv.__len__() > 1:
     # path_param = sys.argv[1]
     path_param = test_class_path
