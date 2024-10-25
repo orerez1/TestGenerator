@@ -16,10 +16,10 @@ class JavaFunctionRepresentation:
         name (str): The name of the Java function.
 
     Methods:
-        extract_params(): Extracts the function's parameters and saves them in the [params](cci:1://file:///c:/Users/orkin/OneDrive/Desktop/work/PythonProjects/TestGenerator/Representations/JavaFunctionRepresentation.py:12:4-26:20) attribute.
+        extract_params(): Extracts the function's parameters and saves them in the [params] attribute.
         extract_function_types(): Extracts the function's return type and access type and saves them in the `return_type` and `access_type` attributes.
         extract_exceptions(): Extracts the exceptions that the function declares it could throw and saves them in the `exceptions_thrown` attribute.
-        extract_name(): Extracts the function's name and saves it in the [name](cci:1://file:///c:/Users/orkin/OneDrive/Desktop/work/PythonProjects/TestGenerator/Representations/JavaFunctionRepresentation.py:72:4-78:65) attribute.
+        extract_name(): Extracts the function's name and saves it in the [name] attribute.
     """
     
     full_text = ""  # The full text of the function
@@ -70,7 +70,8 @@ class JavaFunctionRepresentation:
                 continue
             
             if not is_static and not access and not part.__contains__('\t'):
-                if self.is_static: declaration_parts.remove("static")
+                if self.is_static: 
+                    declaration_parts.remove("static")
                 declaration_parts.remove(declaration_parts[0])
                 self.return_type = declaration_parts[0]
                 if len(declaration_parts) >= 2 and declaration_parts[1].__contains__(">"):
