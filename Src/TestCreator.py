@@ -191,7 +191,8 @@ class TestCreator:
     """
     Creates test cases and test classes for a Java class.
 
-    This class provides methods to generate standard and edge case test templates for each function in the Java class representation. It also handles the creation of test classes directories and test files.
+    This class provides methods to generate standard and edge case test templates for each function in the Java class representation.
+    It also handles the creation of test classes directories and test files.
 
     Attributes:
         project_name (str): The name of the project.
