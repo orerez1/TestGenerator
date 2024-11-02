@@ -3,6 +3,7 @@ import platform
 # import sys
 # import os
 # idea_projects_path = os.getcwd()  # Example. fill with the path to your "IdeaProjects" directory
+# os.path.join(idea_projects_path, "src", "Weird.java") # Idea for generic cross-platform path management
 
 test_class_path = 'C:\\Users\\orkin\\IdeaProjects\\Testing\\src\\Weird.java'
 
