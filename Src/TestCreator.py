@@ -102,6 +102,30 @@ def create_standard_tests_for_function(
         )
     return function_tests
 
+def create_exception_throwing_tests_for_function(
+    func: JavaFunctionRepresentation,
+    class_name: str,
+    test_params: str,
+    is_singleton: bool,
+) -> str:
+
+    function_name = capitalize_first_letter(func.name)
+    function_tests = ""
+    for thrown_exception in func.exceptions_thrown:
+        for number in range(1, Config.number_of_expected_error_tests_per_thrown_exception + 1):
+            sending_params = create_sending_params(test_params=test_params)
+            function_tests += Templates.create_exception_test(
+                function_in_name=function_name,
+                exception=thrown_exception,
+                class_name=class_name,
+                java_function=func.name,
+                sending_params=sending_params,
+                test_number=number,
+                params=test_params,
+                is_singleton=is_singleton
+            )
+    return function_tests
+
 
 def create_edge_case_test_for_function(
     func: JavaFunctionRepresentation,
@@ -245,6 +269,17 @@ class TestCreator:
             test_params = create_test_parameters(java_function=func)
             if func.return_type != "void":
                 test = create_null_edge_case_test_for_function(
+                    func=func,
+                    class_name=self.class_representation.name,
+                    test_params=test_params,
+                    is_singleton=self.class_representation.is_singleton,
+                )
+                tests += test
+                
+        for func in self.class_representation.functions:
+            test_params = create_test_parameters(java_function=func)
+            if func.return_type != "void":
+                test = create_exception_throwing_tests_for_function(
                     func=func,
                     class_name=self.class_representation.name,
                     test_params=test_params,
