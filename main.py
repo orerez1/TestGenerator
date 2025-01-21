@@ -1,5 +1,5 @@
 import sys
-
+#lol
 from Src.TestCreator import TestCreator
 from Util import Templates
 print("1. System arguments:")
