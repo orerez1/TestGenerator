@@ -1,14 +1,10 @@
 import platform
 import sys
-# idea_projects_path = os.getcwd()  # Example. fill with the path to your "IdeaProjects" directory
-# os.path.join(idea_projects_path, "src", "Weird.java") # Idea for generic cross-platform path management
 
 test_class_path = sys.argv[1]
 
 os_name = platform.system().lower()
-# separator = (
-#     "\\" if os_name.__contains__("windows") else "/"
-# )  # Designed for Windows and Linux
+
 separator = "/"
 tests_folder_name = "tests"
 path_param = test_class_path
