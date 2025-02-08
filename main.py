@@ -1,21 +1,24 @@
 import sys
+import os
 
-from Src.TestCreator import TestCreator
-from Util import Templates
-if True or sys.argv.__len__() > 1:
-    path_param = sys.argv[1]
-    print(path_param)
-    path = path_param.split(f"IdeaProjects{Templates.separator}")[1].split(Templates.separator)
-    try:
-        with open(path_param, 'r') as f:
-            class_full_text = f.read()      
-    except Exception as e:
-        print(e)
+from Src.generateClass import generateClass
 
-    project_name = path[0]
-    test_creator = TestCreator(project_name, class_full_text)
-    test_creator.create_file()
-    print("Done!")
+def create_tests_recursively(path_param):
+    for item in os.listdir(path=path_param):
+        try:    
+            item_path = os.path.join(path_param, item)
+            if os.path.isdir(item_path):
+                create_tests_recursively(item_path)
+            else:
+                generateClass(item_path)
+        except Exception as e:
+            print(e)
     
+if sys.argv.__len__() > 1:
+    path_param = sys.argv[1]
+    if os.path.isdir(path_param):
+        create_tests_recursively(path_param)
+    else:
+        generateClass(path_param)
 else:
     print("Error! Cannot create relevant tests without a given file path!")
