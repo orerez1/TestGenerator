@@ -330,12 +330,11 @@ class TestCreator:
 
         self.create_test_classes_dir()
         
-
         with open(
             Templates.path_to_test_classes.replace(
                 "PROJECT_NAME", self.project_name
             ).replace("CLASS_NAME", self.class_representation.name),
-            "w+",
+            "r+",
         ) as f:
             
             # If there are existing tests, we will use them to create the file
