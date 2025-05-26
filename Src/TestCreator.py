@@ -355,6 +355,9 @@ class TestCreator:
             existing_tests = None
             if f.readable():
                 existing_tests = f.read()
+                if not existing_tests.__contains__(Templates.eof):
+                    existing_tests = None
+                    
             result = (
             Templates.tests_class.replace("TESTS", self.create_tests(existing_tests= existing_tests))
             .replace("BEFORE", Templates.before_test_function)
