@@ -41,6 +41,7 @@ def create_standard_test(
     sending_params: str,
     params: str,
     is_singleton: bool,
+    existing_tests: str = None
 ) -> str:
     """
     Generates a standard test template for a given Java function.
@@ -54,6 +55,7 @@ def create_standard_test(
         sending_params (str): The parameters to be passed to the function during the test.
         params (str): Additional test parameters.
         is_singleton (bool): Indicates if the class is a Singleton.
+        existing_tests (str, optional): Existing tests to avoid duplicates. Defaults to None.
 
     Returns:
         str: A formatted Java test method as a string.
@@ -62,14 +64,17 @@ def create_standard_test(
         - If the function is "getInstance" or the same as the class name, an empty string is returned.
         - Handles both Singleton and non-Singleton class instantiation.
     """
+    declaration = "public void test{function_in_name}Standard{test_number}()"
+    # used to determine whether the test is a duplicate
 
     # returns an empty string if the function is "getInstance" or the same as the class name because we don't want to test constructors
-    if java_function in ["getInstance", class_name]:
+    # and we don't want to test the same function twice so we check if the existing tests already contain the declaration
+    if java_function in ["getInstance", class_name] or (existing_tests is not None and existing_tests.__contains__(declaration)):
         return ""
 
     return f"""
 \t@Test
-\tpublic void test{function_in_name}Standard{test_number}() {{
+\t{declaration} {{
 \t\tfinal {return_type} EXPECTED = ?;
 {params}
 \t\tfinal {return_type} RESULT = {get_instance_call(class_name, is_singleton)}().{java_function}({sending_params});
@@ -87,6 +92,7 @@ def create_edge_case_test(
     sending_params: str,
     params: str,
     is_singleton: bool,
+    existing_tests: str = None
 ) -> str:
     """
     Generates an edge case test template for a given Java function.
@@ -101,6 +107,7 @@ def create_edge_case_test(
         sending_params (str): The parameters to be passed to the function during the test.
         params (str): Additional test parameters.
         is_singleton (bool): Indicates if the class is a Singleton.
+        existing_tests (str, optional): Existing tests to avoid duplicates. Defaults to None.
 
     Returns:
         str: A formatted Java test method as a string.
@@ -113,15 +120,17 @@ def create_edge_case_test(
     # returns an empty string if the function is "getInstance" or the same as the class name because we don't want to test constructors
     if java_function in ["getInstance", class_name]:
         return ""
-
+    
+    # used to determine whether the test is a duplicate
+    declaration = "public void test{function_in_name}EdgeCase{param_name}{test_number}()"
     return f"""
 \t@Test
-\tpublic void test{function_in_name}EdgeCase{param_name}{test_number}() {{
+\t{declaration} {{
 \t\tfinal {return_type} EXPECTED = ?;
 {params}
 \t\tfinal {return_type} RESULT = {get_instance_call(class_name, is_singleton)}().{java_function}({sending_params});
 \t\tassertEquals(EXPECTED, RESULT);
-\t}}\n"""
+\t}}\n""" if existing_tests is None or not existing_tests.__contains__(declaration) else ""
 
 
 def create_null_edge_case_test(
@@ -135,6 +144,7 @@ def create_null_edge_case_test(
     params: str,
     is_singleton: bool,
     param_type: str,
+    existing_tests: str = None
 ) -> str:
     """
     Generates a null edge case test template for a given Java function.
@@ -150,6 +160,7 @@ def create_null_edge_case_test(
         params (str): Additional test parameters.
         is_singleton (bool): Indicates if the class is a Singleton.
         param_type (str): The type of the parameter associated with the null edge case.
+        existing_tests (str, optional): Existing tests to avoid duplicates. Defaults to None.
 
     Returns:
         str: A formatted Java test method as a string.
@@ -171,6 +182,7 @@ def create_null_edge_case_test(
         "float",
         "double",
     ]
+    
 
     # returns an empty string if the function is "getInstance" or the same as the class name because we don't want to test constructors
     if java_function in ["getInstance", class_name] or param_type in primitive_types:
@@ -195,14 +207,18 @@ def create_null_edge_case_test(
 
     # replace the param name with null in the test method parameters
     sending_params = sending_params.replace(lowered_param_name, "null")
+    
+    # used to determine whether the test is a duplicate
+    declaration = "public void test{function_in_name}NullParam{param_name}{test_number}()"
+    
     return f"""
 \t@Test
-\tpublic void test{function_in_name}NullParam{param_name}{test_number}() {{
+\t{declaration} {{
 \t\tfinal {return_type} EXPECTED = ?;
 {params}
 \t\tfinal {return_type} RESULT = {get_instance_call(class_name, is_singleton)}().{java_function}({sending_params});
 \t\tassertEquals(EXPECTED, RESULT);
-\t}}\n"""
+\t}}\n""" if existing_tests is None or not existing_tests.__contains__(declaration) else ""
 
 
 def create_exception_test(
@@ -214,6 +230,7 @@ def create_exception_test(
     test_number: str,
     params: str,
     is_singleton: bool,
+    existing_tests: str = None,
 ) -> str:
     """
     Generates an exception-throwing test template for a given Java function.
@@ -225,17 +242,22 @@ def create_exception_test(
         java_function (str): The name of the function being tested.
         sending_params (str): The parameters to be passed to the function during the test.
         test_number (str): A unique identifier for the test.
+        params (str): Additional test parameters.
+        is_singleton (bool): Indicates if the class is a Singleton.
+        existing_tests (str, optional): Existing tests to avoid duplicates. Defaults to None.
 
     Returns:
         str: A formatted Java test method for exception throwing as a string.
     """
 
+    # used to determine whether the test is a duplicate
+    declaration = "public void test{function_in_name}Throws{exception}{test_number}()"
     return f"""
 \t@Test(expectedExceptions = {exception}.class)
-\tpublic void test{function_in_name}Throws{exception}{test_number}() {{
+\t{declaration} {{
 {params}
 \t\t{get_instance_call(class_name, is_singleton)}().{java_function}({sending_params});
-\t}}"""
+\t}}""" if existing_tests is None or not existing_tests.__contains__(declaration) else ""
 
 
 standard_test = """\t@Test
@@ -294,4 +316,10 @@ public class CLASS_NAMETest {
     TEAR_DOWN
     TESTS
 }
+"""
+
+eof = """
+    /*
+        End of tests - do not edit. if this text is changed or deleted, the file will be overwritten during the next generation.
+    */
 """
