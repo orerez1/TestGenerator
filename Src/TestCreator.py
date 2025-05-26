@@ -330,6 +330,20 @@ class TestCreator:
 
         self.create_test_classes_dir()
         
+        # If the test class file does not exist, create it to avoid errors when trying to read from it later
+        if not os.path.exists(
+            Templates.path_to_test_classes.replace(
+                "PROJECT_NAME", self.project_name
+            ).replace("CLASS_NAME", self.class_representation.name)
+        ):
+            with open(
+                Templates.path_to_test_classes.replace(
+                    "PROJECT_NAME", self.project_name
+                ).replace("CLASS_NAME", self.class_representation.name),
+                "w",
+            ) as f:
+                f.write("")
+                
         with open(
             Templates.path_to_test_classes.replace(
                 "PROJECT_NAME", self.project_name
