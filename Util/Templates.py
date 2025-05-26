@@ -64,7 +64,7 @@ def create_standard_test(
         - If the function is "getInstance" or the same as the class name, an empty string is returned.
         - Handles both Singleton and non-Singleton class instantiation.
     """
-    declaration = "public void test{function_in_name}Standard{test_number}()"
+    declaration = f"public void test{function_in_name}Standard{test_number}()"
     # used to determine whether the test is a duplicate
 
     # returns an empty string if the function is "getInstance" or the same as the class name because we don't want to test constructors
@@ -122,7 +122,7 @@ def create_edge_case_test(
         return ""
     
     # used to determine whether the test is a duplicate
-    declaration = "public void test{function_in_name}EdgeCase{param_name}{test_number}()"
+    declaration = f"public void test{function_in_name}EdgeCase{param_name}{test_number}()"
     return f"""
 \t@Test
 \t{declaration} {{
@@ -209,7 +209,7 @@ def create_null_edge_case_test(
     sending_params = sending_params.replace(lowered_param_name, "null")
     
     # used to determine whether the test is a duplicate
-    declaration = "public void test{function_in_name}NullParam{param_name}{test_number}()"
+    declaration = f"public void test{function_in_name}NullParam{param_name}{test_number}()"
     
     return f"""
 \t@Test
@@ -251,7 +251,7 @@ def create_exception_test(
     """
 
     # used to determine whether the test is a duplicate
-    declaration = "public void test{function_in_name}Throws{exception}{test_number}()"
+    declaration = f"public void test{function_in_name}Throws{exception}{test_number}()"
     return f"""
 \t@Test(expectedExceptions = {exception}.class)
 \t{declaration} {{
@@ -318,6 +318,7 @@ public class CLASS_NAMETest {
 }
 """
 
+# only one should exist in the file
 eof = """
     /*
         End of tests - do not edit. if this text is changed or deleted, the file will be overwritten during the next generation.
