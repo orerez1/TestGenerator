@@ -233,10 +233,11 @@ class TestCreator:
     project_name = ""
     full_text = ""
     class_representation = None
+    
 
-    def create_tests(self) -> str:
+    def create_tests(self, existing_tests:str = None) -> str:        
         """
-        Generates test templates for each function in the Java class representation.
+        Generates test templates for each function in the Java class representation that didn't already have them.
 
         Returns:
             str: A string containing formatted test templates for standard and edge case tests.
@@ -251,6 +252,7 @@ class TestCreator:
                     class_name=self.class_representation.name,
                     test_params=test_params,
                     is_singleton=self.class_representation.is_singleton,
+                    existing_tests=existing_tests
                 )
                 tests += test
 
@@ -262,6 +264,7 @@ class TestCreator:
                     class_name=self.class_representation.name,
                     test_params=test_params,
                     is_singleton=self.class_representation.is_singleton,
+                    existing_tests=existing_tests
                 )
                 tests += test
 
@@ -273,6 +276,7 @@ class TestCreator:
                     class_name=self.class_representation.name,
                     test_params=test_params,
                     is_singleton=self.class_representation.is_singleton,
+                    existing_tests=existing_tests
                 )
                 tests += test
                 
@@ -284,10 +288,15 @@ class TestCreator:
                     class_name=self.class_representation.name,
                     test_params=test_params,
                     is_singleton=self.class_representation.is_singleton,
+                    existing_tests=existing_tests
                 )
                 tests += test
-
-        return tests
+        
+        # If there are existing tests, append the new tests to them        
+        if existing_tests:
+            tests = existing_tests.replace(Templates.eof, tests)
+            
+        return tests + Templates.eof
 
     def create_test_classes_dir(self) -> None:
         """
@@ -311,29 +320,36 @@ class TestCreator:
 
         This method replaces placeholders in the test class template with actual test functions, setup, teardown, class name, and project name. It then creates the necessary directory structure for the test classes and writes the formatted test classes to a new file
         """
+        
+        folder = Templates.path_to_test_classes.replace(
+            "PROJECT_NAME", self.project_name
+        ).split(f"{Templates.separator}CLASS_NAME")[0]
+        
+        if not os.path.exists(folder):
+            os.mkdir(folder)
 
         self.create_test_classes_dir()
-        result = (
-            Templates.tests_class.replace("TESTS", self.create_tests())
+        
+
+        with open(
+            Templates.path_to_test_classes.replace(
+                "PROJECT_NAME", self.project_name
+            ).replace("CLASS_NAME", self.class_representation.name),
+            "w+",
+        ) as f:
+            
+            # If there are existing tests, we will use them to create the file
+            existing_tests = None
+            if f.readable():
+                existing_tests = f.read()
+            result = (
+            Templates.tests_class.replace("TESTS", self.create_tests(existing_tests= existing_tests))
             .replace("BEFORE", Templates.before_test_function)
             .replace("TEAR_DOWN", Templates.tear_down_function)
             .replace("CLASS_NAME", self.class_representation.name)
             .replace("PROJECT_NAME", self.project_name.upper())
-        )
-
-        folder = Templates.path_to_test_classes.replace(
-            "PROJECT_NAME", self.project_name
-        ).split(f"{Templates.separator}CLASS_NAME")[0]
-
-        if not os.path.exists(folder):
-            os.mkdir(folder)
-        f = open(
-            Templates.path_to_test_classes.replace(
-                "PROJECT_NAME", self.project_name
-            ).replace("CLASS_NAME", self.class_representation.name),
-            "w",
-        )
-        f.write(result)
+            )
+            f.write(result)
 
     def __init__(self, project_name: str, full_text: str) -> None:
         """
