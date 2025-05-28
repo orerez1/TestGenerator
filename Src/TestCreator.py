@@ -256,51 +256,47 @@ class TestCreator:
         tests = ""
         for func in self.class_representation.functions:
             test_params = create_test_parameters(java_function=func)
-            if func.return_type != "void":
-                test = create_standard_tests_for_function(
-                    func=func,
-                    class_name=self.class_representation.name,
-                    test_params=test_params,
-                    is_singleton=self.class_representation.is_singleton,
-                    existing_tests=existing_tests
-                )
-                tests += test
+            test = create_standard_tests_for_function(
+                func=func,
+                class_name=self.class_representation.name,
+                test_params=test_params,
+                is_singleton=self.class_representation.is_singleton,
+                existing_tests=existing_tests
+            )
+            tests += test
 
         for func in self.class_representation.functions:
             test_params = create_test_parameters(java_function=func)
-            if func.return_type != "void":
-                test = create_edge_case_test_for_function(
-                    func=func,
-                    class_name=self.class_representation.name,
-                    test_params=test_params,
-                    is_singleton=self.class_representation.is_singleton,
-                    existing_tests=existing_tests
-                )
-                tests += test
+            test = create_edge_case_test_for_function(
+                func=func,
+                class_name=self.class_representation.name,
+                test_params=test_params,
+                is_singleton=self.class_representation.is_singleton,
+                existing_tests=existing_tests
+            )
+            tests += test
 
         for func in self.class_representation.functions:
             test_params = create_test_parameters(java_function=func)
-            if func.return_type != "void":
-                test = create_null_edge_case_test_for_function(
-                    func=func,
-                    class_name=self.class_representation.name,
-                    test_params=test_params,
-                    is_singleton=self.class_representation.is_singleton,
-                    existing_tests=existing_tests
-                )
-                tests += test
+            test = create_null_edge_case_test_for_function(
+                func=func,
+                class_name=self.class_representation.name,
+                test_params=test_params,
+                is_singleton=self.class_representation.is_singleton,
+                existing_tests=existing_tests
+            )
+            tests += test
                 
         for func in self.class_representation.functions:
             test_params = create_test_parameters(java_function=func)
-            if func.return_type != "void":
-                test = create_exception_throwing_tests_for_function(
-                    func=func,
-                    class_name=self.class_representation.name,
-                    test_params=test_params,
-                    is_singleton=self.class_representation.is_singleton,
-                    existing_tests=existing_tests
-                )
-                tests += test
+            test = create_exception_throwing_tests_for_function(
+                func=func,
+                class_name=self.class_representation.name,
+                test_params=test_params,
+                is_singleton=self.class_representation.is_singleton,
+                existing_tests=existing_tests
+            )
+            tests += test
                 
         return tests + Templates.eof  # Add end of file marker to the tests string
 
@@ -326,7 +322,7 @@ class TestCreator:
                 .replace("TEAR_DOWN", Templates.tear_down_function)
                 .replace("CLASS_NAME", self.class_representation.name)
                 .replace("PROJECT_NAME", self.project_name.upper()))
-    def create_file(self) -> None:  # sourcery skip: ensure-file-closed, extract-method
+    def create_file(self) -> None: 
         """
         Creates a test file with formatted test classes.
 
@@ -345,23 +341,21 @@ class TestCreator:
         test_class_path = Templates.path_to_test_classes.replace(
                     "PROJECT_NAME", self.project_name
                 ).replace("CLASS_NAME", self.class_representation.name)
-        
+        # Check if the test class file already exists. Not using "with" due to problems with multiple openings of the same file in different modes
         if os.path.exists(test_class_path):
             test_class_file = open(test_class_path, "r")
             result = test_class_file.read()# If there are existing tests, we will use them to create the file
             test_class_file.close()
             if result.__contains__(Templates.eof):
                 tests = self.create_tests(existing_tests=result)
-                print(tests)
                 result = result.replace(Templates.eof, tests)
             else:
                 result = self.create_test_class_from_template()
-                print(result)
         else:
             result = self.create_test_class_from_template()
         
         # Create the test class file with the formatted tests
-        test_class_file = open(test_class_path, "w")
+        test_class_file = open(test_class_path, "w") # Meant to make sure the new file is created or overwritten
         test_class_file.write(result)
         test_class_file.close()
 

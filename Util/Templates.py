@@ -32,6 +32,13 @@ def get_instance_call(class_name: str, is_singleton: bool) -> str:
     return f"{class_name}.getInstance" if is_singleton else f"new {class_name}"
 
 
+def get_testing_logic(class_name, java_function, sending_params, return_type, is_singleton):
+    if return_type == "void":
+        return f"{get_instance_call(class_name, is_singleton)}().{java_function}({sending_params});"
+    return f"""final {return_type} RESULT = {get_instance_call(class_name, is_singleton)}().{java_function}({sending_params});
+\t\tassertEquals(EXPECTED, RESULT);"""
+
+
 def create_standard_test(
     function_in_name: str,
     test_number: str,
@@ -77,8 +84,7 @@ def create_standard_test(
 \t{declaration} {{
 \t\tfinal {return_type} EXPECTED = ?;
 {params}
-\t\tfinal {return_type} RESULT = {get_instance_call(class_name, is_singleton)}().{java_function}({sending_params});
-\t\tassertEquals(EXPECTED, RESULT);
+\t\t{get_testing_logic(class_name, java_function, sending_params, return_type, is_singleton)}
 \t}}\n"""
 
 
@@ -123,13 +129,16 @@ def create_edge_case_test(
     
     # used to determine whether the test is a duplicate
     declaration = f"public void test{function_in_name}EdgeCase{param_name}{test_number}()"
+    
+    
+
     return f"""
 \t@Test
 \t{declaration} {{
+\t\t{get_testing_logic(class_name, java_function, sending_params, return_type, is_singleton)}
 \t\tfinal {return_type} EXPECTED = ?;
 {params}
-\t\tfinal {return_type} RESULT = {get_instance_call(class_name, is_singleton)}().{java_function}({sending_params});
-\t\tassertEquals(EXPECTED, RESULT);
+
 \t}}\n""" if not existing_tests.__contains__(declaration) else ""
 
 
@@ -216,8 +225,7 @@ def create_null_edge_case_test(
 \t{declaration} {{
 \t\tfinal {return_type} EXPECTED = ?;
 {params}
-\t\tfinal {return_type} RESULT = {get_instance_call(class_name, is_singleton)}().{java_function}({sending_params});
-\t\tassertEquals(EXPECTED, RESULT);
+\t\t{get_testing_logic(class_name, java_function, sending_params, return_type, is_singleton)}
 \t}}\n""" if not existing_tests.__contains__(declaration) else ""
 
 
@@ -287,6 +295,13 @@ null_case_test = """\t@Test
 expected_error_test = """\t@Test(expectedExceptions = EXCEPTION.class)
 \tpublic void testFUNCTION_IN_NAMEThrowsEXCEPTIONTEST_NUMBER() {
 \t\tnew CLASS_NAME(?).FUNCTION(?);
+\t}"""
+
+void_return_test = """\t@Test
+\tpublic void testFUNCTION_IN_NAMEStandardTEST_NUMBER() {
+\t\t// This test is for functions that return void and do not throw exceptions. Use this test to test the side effects of the function.
+\t\tPARAMS
+\t\tnew CLASS_NAME().FUNCTION(SENDING_PARAMS);
 \t}"""
 
 final_param_for_test = "final PARAM_TYPE PARAM_NAME = ?;"
