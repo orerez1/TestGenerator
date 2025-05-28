@@ -72,6 +72,7 @@ def create_standard_tests_for_function(
     class_name: str,
     test_params: str,
     is_singleton: bool,
+    existing_tests: str = ""
 ) -> str:
     """
     Generates multiple standard test templates for a Java function.
@@ -81,6 +82,7 @@ def create_standard_tests_for_function(
         class_name (str): The name of the class containing the function.
         test_params (str): A string containing test parameters.
         is_singleton (bool): Indicates if the class is a Singleton.
+        existing_tests (str): Existing tests to append new tests to, if any.
 
     Returns:
         str: A string containing multiple formatted Java test methods.
@@ -99,6 +101,7 @@ def create_standard_tests_for_function(
             sending_params=sending_params,
             params=test_params,
             is_singleton=is_singleton,
+            existing_tests=existing_tests
         )
     return function_tests
 
@@ -107,6 +110,7 @@ def create_exception_throwing_tests_for_function(
     class_name: str,
     test_params: str,
     is_singleton: bool,
+    existing_tests: str = ""
 ) -> str:
 
     function_name = capitalize_first_letter(func.name)
@@ -122,7 +126,8 @@ def create_exception_throwing_tests_for_function(
                 sending_params=sending_params,
                 test_number=number,
                 params=test_params,
-                is_singleton=is_singleton
+                is_singleton=is_singleton,
+                existing_tests=existing_tests
             )
     return function_tests
 
@@ -132,6 +137,7 @@ def create_edge_case_test_for_function(
     class_name: str,
     test_params: str,
     is_singleton: bool,
+    existing_tests: str = ""
 ) -> str:
     """
     Generates edge case test templates for a Java function.
@@ -141,6 +147,7 @@ def create_edge_case_test_for_function(
         class_name (str): The name of the class containing the function.
         test_params (str): A string containing test parameters.
         is_singleton (bool): Indicates if the class is a Singleton.
+        existing_tests (str): Existing tests to append new tests to, if any.
 
     Returns:
         str: A string containing formatted Java test methods.
@@ -164,6 +171,7 @@ def create_edge_case_test_for_function(
                 sending_params=sending_params,
                 params=test_params,
                 is_singleton=is_singleton,
+                existing_tests=existing_tests,
             )
 
     return function_tests
@@ -173,6 +181,7 @@ def create_null_edge_case_test_for_function(
     class_name: str,
     test_params: str,
     is_singleton: bool,
+    existing_tests: str = ""
 ) -> str:
     """
     Generates edge case test templates for a Java function.
@@ -205,7 +214,8 @@ def create_null_edge_case_test_for_function(
                 sending_params=sending_params,
                 params=test_params,
                 is_singleton=is_singleton,
-                param_type=param_type
+                param_type=param_type,
+                existing_tests=existing_tests
             )
 
     return function_tests
@@ -235,7 +245,7 @@ class TestCreator:
     class_representation = None
     
 
-    def create_tests(self, existing_tests:str = None) -> str:        
+    def create_tests(self, existing_tests:str = "") -> str:        
         """
         Generates test templates for each function in the Java class representation that didn't already have them.
 
@@ -291,12 +301,8 @@ class TestCreator:
                     existing_tests=existing_tests
                 )
                 tests += test
-        
-        # If there are existing tests, append the new tests to them        
-        if existing_tests:
-            tests = existing_tests.replace(Templates.eof, tests)
-            
-        return tests + Templates.eof
+                
+        return tests + Templates.eof  # Add end of file marker to the tests string
 
     def create_test_classes_dir(self) -> None:
         """
@@ -314,7 +320,13 @@ class TestCreator:
         if not os.path.exists(path_to_dir):
             os.mkdir(path_to_dir)
 
-    def create_file(self) -> None:
+    def create_test_class_from_template(self) -> str:
+        return (Templates.tests_class.replace("TESTS", self.create_tests(existing_tests=""))
+                .replace("BEFORE", Templates.before_test_function)
+                .replace("TEAR_DOWN", Templates.tear_down_function)
+                .replace("CLASS_NAME", self.class_representation.name)
+                .replace("PROJECT_NAME", self.project_name.upper()))
+    def create_file(self) -> None:  # sourcery skip: ensure-file-closed, extract-method
         """
         Creates a test file with formatted test classes.
 
@@ -329,43 +341,30 @@ class TestCreator:
             os.mkdir(folder)
 
         self.create_test_classes_dir()
-        
-        # If the test class file does not exist, create it to avoid errors when trying to read from it later
-        if not os.path.exists(
-            Templates.path_to_test_classes.replace(
-                "PROJECT_NAME", self.project_name
-            ).replace("CLASS_NAME", self.class_representation.name)
-        ):
-            with open(
-                Templates.path_to_test_classes.replace(
-                    "PROJECT_NAME", self.project_name
-                ).replace("CLASS_NAME", self.class_representation.name),
-                "w",
-            ) as f:
-                f.write("")
                 
-        with open(
-            Templates.path_to_test_classes.replace(
-                "PROJECT_NAME", self.project_name
-            ).replace("CLASS_NAME", self.class_representation.name),
-            "r+",
-        ) as f:
-            
-            # If there are existing tests, we will use them to create the file
-            existing_tests = None
-            if f.readable():
-                existing_tests = f.read()
-                if not existing_tests.__contains__(Templates.eof):
-                    existing_tests = None
-                    
-            result = (
-            Templates.tests_class.replace("TESTS", self.create_tests(existing_tests= existing_tests))
-            .replace("BEFORE", Templates.before_test_function)
-            .replace("TEAR_DOWN", Templates.tear_down_function)
-            .replace("CLASS_NAME", self.class_representation.name)
-            .replace("PROJECT_NAME", self.project_name.upper())
-            )
-            f.write(result)
+        test_class_path = Templates.path_to_test_classes.replace(
+                    "PROJECT_NAME", self.project_name
+                ).replace("CLASS_NAME", self.class_representation.name)
+        
+        if os.path.exists(test_class_path):
+            test_class_file = open(test_class_path, "r")
+            result = test_class_file.read()# If there are existing tests, we will use them to create the file
+            test_class_file.close()
+            if result.__contains__(Templates.eof):
+                tests = self.create_tests(existing_tests=result)
+                print(tests)
+                result = result.replace(Templates.eof, tests)
+            else:
+                result = self.create_test_class_from_template()
+                print(result)
+        else:
+            result = self.create_test_class_from_template()
+        
+        # Create the test class file with the formatted tests
+        test_class_file = open(test_class_path, "w")
+        test_class_file.write(result)
+        test_class_file.close()
+
 
     def __init__(self, project_name: str, full_text: str) -> None:
         """

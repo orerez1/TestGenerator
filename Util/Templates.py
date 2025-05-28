@@ -41,7 +41,7 @@ def create_standard_test(
     sending_params: str,
     params: str,
     is_singleton: bool,
-    existing_tests: str = None
+    existing_tests: str = ""
 ) -> str:
     """
     Generates a standard test template for a given Java function.
@@ -69,7 +69,7 @@ def create_standard_test(
 
     # returns an empty string if the function is "getInstance" or the same as the class name because we don't want to test constructors
     # and we don't want to test the same function twice so we check if the existing tests already contain the declaration
-    if java_function in ["getInstance", class_name] or (existing_tests is not None and existing_tests.__contains__(declaration)):
+    if java_function in ["getInstance", class_name] or existing_tests.__contains__(declaration):
         return ""
 
     return f"""
@@ -92,7 +92,7 @@ def create_edge_case_test(
     sending_params: str,
     params: str,
     is_singleton: bool,
-    existing_tests: str = None
+    existing_tests: str = ""
 ) -> str:
     """
     Generates an edge case test template for a given Java function.
@@ -130,7 +130,7 @@ def create_edge_case_test(
 {params}
 \t\tfinal {return_type} RESULT = {get_instance_call(class_name, is_singleton)}().{java_function}({sending_params});
 \t\tassertEquals(EXPECTED, RESULT);
-\t}}\n""" if existing_tests is None or not existing_tests.__contains__(declaration) else ""
+\t}}\n""" if not existing_tests.__contains__(declaration) else ""
 
 
 def create_null_edge_case_test(
@@ -144,7 +144,7 @@ def create_null_edge_case_test(
     params: str,
     is_singleton: bool,
     param_type: str,
-    existing_tests: str = None
+    existing_tests: str = ""
 ) -> str:
     """
     Generates a null edge case test template for a given Java function.
@@ -218,7 +218,7 @@ def create_null_edge_case_test(
 {params}
 \t\tfinal {return_type} RESULT = {get_instance_call(class_name, is_singleton)}().{java_function}({sending_params});
 \t\tassertEquals(EXPECTED, RESULT);
-\t}}\n""" if existing_tests is None or not existing_tests.__contains__(declaration) else ""
+\t}}\n""" if not existing_tests.__contains__(declaration) else ""
 
 
 def create_exception_test(
@@ -230,7 +230,7 @@ def create_exception_test(
     test_number: str,
     params: str,
     is_singleton: bool,
-    existing_tests: str = None,
+    existing_tests: str = "",
 ) -> str:
     """
     Generates an exception-throwing test template for a given Java function.
@@ -257,7 +257,7 @@ def create_exception_test(
 \t{declaration} {{
 {params}
 \t\t{get_instance_call(class_name, is_singleton)}().{java_function}({sending_params});
-\t}}""" if existing_tests is None or not existing_tests.__contains__(declaration) else ""
+\t}}""" if not existing_tests.__contains__(declaration) else ""
 
 
 standard_test = """\t@Test
@@ -320,7 +320,7 @@ public class CLASS_NAMETest {
 
 # only one should exist in the file
 eof = """
+
     /*
         End of tests - do not edit. if this text is changed or deleted, the file will be overwritten during the next generation.
-    */
-"""
+    */"""
