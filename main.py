@@ -4,7 +4,22 @@ import os
 from Src.generateClass import generateClass
 from Util import Templates
 
-def create_tests_recursively(path_param):
+def create_tests_recursively(path_param: str) -> None:
+    """
+    Recursively generates test cases for Java classes within a directory.
+
+    This function traverses through the given directory path and its subdirectories,
+    generating test cases for each Java class file found. It skips directories and files
+    specified in the excluded folders list.
+
+    Args:
+        path_param (str): The path of the directory to process for Java class files.
+
+    Notes:
+        - Directories listed in Templates.excluded_folders are skipped.
+        - Test generation is initiated by calling generateClass on each Java file found.
+    """
+
     directory_name = path_param.split(Templates.separator)[-1]
     if directory_name in Templates.excluded_folders:
         print(f"Skipping excluded folder: {directory_name}")
