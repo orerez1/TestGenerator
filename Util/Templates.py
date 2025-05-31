@@ -152,10 +152,9 @@ def create_edge_case_test(
     return f"""
 \t@Test
 \t{declaration} {{
-\t\t{get_testing_logic(class_name, java_function, sending_params, return_type, is_singleton)}
 \t\tfinal {return_type} EXPECTED = ?;
 {params}
-
+\t\t{get_testing_logic(class_name, java_function, sending_params, return_type, is_singleton)}
 \t}}\n""" if not existing_tests.__contains__(declaration) else ""
 
 
