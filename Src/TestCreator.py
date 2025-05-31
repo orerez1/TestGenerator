@@ -113,6 +113,19 @@ def create_exception_throwing_tests_for_function(
     existing_tests: str = ""
 ) -> str:
 
+    """
+    Generates multiple exception-throwing test templates for a Java function.
+
+    Args:
+        func (JavaFunctionRepresentation): The Java function representation object.
+        class_name (str): The name of the class containing the function.
+        test_params (str): A string containing test parameters.
+        is_singleton (bool): Indicates if the class is a Singleton.
+        existing_tests (str, optional): Existing tests to avoid duplicates. Defaults to None.
+
+    Returns:
+        str: A string containing multiple formatted Java test methods.
+    """
     function_name = capitalize_first_letter(func.name)
     function_tests = ""
     for thrown_exception in func.exceptions_thrown:
@@ -247,12 +260,14 @@ class TestCreator:
 
     def create_tests(self, existing_tests:str = "") -> str:        
         """
-        Generates test templates for each function in the Java class representation that didn't already have them.
+        Generates test templates for each function in the Java class.
+
+        Args:
+            existing_tests (str, optional): Existing tests to avoid duplicates. Defaults to None.
 
         Returns:
-            str: A string containing formatted test templates for standard and edge case tests.
+            str: A string containing formatted Java test methods.
         """
-
         tests = ""
         for func in self.class_representation.functions:
             test_params = create_test_parameters(java_function=func)
@@ -341,8 +356,9 @@ class TestCreator:
         test_class_path = Templates.path_to_test_classes.replace(
                     "PROJECT_NAME", self.project_name
                 ).replace("CLASS_NAME", self.class_representation.name)
-        # Check if the test class file already exists. Not using "with" due to problems with multiple openings of the same file in different modes
+        # Check if the test class file already exists.
         if os.path.exists(test_class_path):
+            # Not using "with" due to problems with multiple openings of the same file in different modes
             test_class_file = open(test_class_path, "r")
             result = test_class_file.read()# If there are existing tests, we will use them to create the file
             test_class_file.close()

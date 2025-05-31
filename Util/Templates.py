@@ -32,7 +32,24 @@ def get_instance_call(class_name: str, is_singleton: bool) -> str:
     return f"{class_name}.getInstance" if is_singleton else f"new {class_name}"
 
 
-def get_testing_logic(class_name, java_function, sending_params, return_type, is_singleton):
+def get_testing_logic(class_name: str, java_function: str, sending_params: str, return_type: str, is_singleton: bool) -> str:
+    """
+    Generates the testing logic for a given Java function.
+
+    Args:
+        class_name (str): The name of the class.
+        java_function (str): The name of the function being tested.
+        sending_params (str): The parameters to be passed to the function during the test.
+        return_type (str): The return type of the function being tested.
+        is_singleton (bool): Indicates if the class is a Singleton.
+
+    Returns:
+        str: The testing logic for the given Java function.
+
+    Notes:
+        - Handles both Singleton and non-Singleton class instantiation.
+        - Handles both void and non-void return types.
+    """
     if return_type == "void":
         return f"{get_instance_call(class_name, is_singleton)}().{java_function}({sending_params});"
     return f"""final {return_type} RESULT = {get_instance_call(class_name, is_singleton)}().{java_function}({sending_params});
