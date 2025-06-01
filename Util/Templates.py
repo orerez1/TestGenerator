@@ -7,6 +7,7 @@ os_name = platform.system().lower()
 
 separator = "/"
 tests_folder_name = "tests"
+excluded_folders = ["out", "build", "bin", "target", "dist", "resources", tests_folder_name, ".idea"]
 path_param = test_class_path
 idea_projects_path = (
     f"{path_param.split(f'IdeaProjects{separator}')[0]}IdeaProjects{separator}"
@@ -283,7 +284,7 @@ def create_exception_test(
 \t\t{get_instance_call(class_name, is_singleton)}().{java_function}({sending_params});
 \t}}""" if not existing_tests.__contains__(declaration) else ""
 
-
+# templates - were originally meant to be used directly but are now used as examples for the functions above
 standard_test = """\t@Test
 \tpublic void testFUNCTION_IN_NAMEStandardTEST_NUMBER() {
 \t\tfinal RETURN_TYPE EXPECTED = ?;
