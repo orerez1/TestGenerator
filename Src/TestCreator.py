@@ -1,10 +1,13 @@
 from Util import Config
 from Util import Templates
+from Util import Regexs
 from Representations.JavaClassRepresentation import JavaClassRepresentation
 from Representations.JavaFunctionRepresentation import JavaFunctionRepresentation
+from Representations.JavaTestRepresentation import JavaTestRepresentation
 
 
 import os
+import re
 
 
 def capitalize_first_letter(text: str) -> str:
@@ -363,6 +366,10 @@ class TestCreator:
             result = test_class_file.read()# If there are existing tests, we will use them to create the file
             test_class_file.close()
             if result.__contains__(Templates.eof):
+                matches = re.findall(Regexs.find_tests_within_test_class, result)
+                previous_tests_list = []
+                for match in matches:
+                    previous_tests_list.append(JavaTestRepresentation(match))
                 tests = self.create_tests(existing_tests=result)
                 result = result.replace(Templates.eof, tests)
             else:
