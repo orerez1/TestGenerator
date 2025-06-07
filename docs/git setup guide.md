@@ -20,3 +20,6 @@ Git installation -
   git --version
   ```
 - If Git is installed correctly, it will display the version number.
+
+
+_For more details, check out [Git’s official setup guide](https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup) or [GitHub’s documentation](https://docs.github.com/en/get-started/git-basics/set-up-git)._
