@@ -29,7 +29,7 @@ Clone the repository to the relevant path on your pc, according to your operatin
      /home
      ```
   _With git installation_
- - Open your terminal and insert the following commands:
+ - Open your terminal (at least on windows, it'll also need to be with admin access to the cmd due to the directory location) and insert the following commands:
 
   ```
   cd <path>
