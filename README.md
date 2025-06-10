@@ -89,7 +89,12 @@ If you run into issues:
 
 ### **6. Using the plugin**  
 To use the plugin, right-click on a file/directory (including the project itself) from the directory tree within IntelliJ and select "New->Generate Tests".
+- ![Screenshot 2025-06-10 213025](https://github.com/user-attachments/assets/d0c133d2-8087-4173-aa7d-6d442aee3fcd)
+
 The tests will appear within a dedicated folder within the project.
+- ![Screenshot 2025-06-10 213151](https://github.com/user-attachments/assets/b15eab6b-0b7c-415f-be05-e1683d428106)
+
+
 
 
 
