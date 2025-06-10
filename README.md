@@ -43,6 +43,7 @@ _Without git installation_
  - Download it to <path> if possible
  - If you can't download it directly to the path, download it to somewhere you can, extract it, and move it to the right path
  - Might need admin permissions
+ - Here's how the path to "main.py" should look like, for example, on Windows: `"C:\Program Files\TestGenerator\main.py"`
 
 
 ### **2. Install the Plugin in IntelliJ IDEA**  
