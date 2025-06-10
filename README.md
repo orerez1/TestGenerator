@@ -79,7 +79,6 @@ Once IntelliJ IDEA restarts, follow these steps to verify that the plugin is ins
 ### **4. Troubleshooting**  
 If you run into issues:  
 - Double-check that you cloned the repository to the correct path.  
-- Ensure you have the correct IntelliJ IDEA version.  
 - Verify that your Python environment is set up correctly.  
 - Check IntelliJ's log files (**Help > Show Log in Explorer**) for possible error messages.  
 - Try reinstalling the plugin using the steps above.
