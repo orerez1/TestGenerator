@@ -82,6 +82,15 @@ If you run into issues:
 - Ensure you have the correct IntelliJ IDEA version.  
 - Verify that your Python environment is set up correctly.  
 - Check IntelliJ's log files (**Help > Show Log in Explorer**) for possible error messages.  
-- Try reinstalling the plugin using the steps above.  
+- Try reinstalling the plugin using the steps above.
+
+### **5. Configuring the plugin**  
+ - Within the Util directory, there's a file called "Config.py" with a list of changeable configurations - set them to your preferences.
+ - When working in teams, the team leader can use that file and configure the testing preferences for their entire team.
+
+### **6. Using the plugin**  
+To use the plugin, right-click on a file/directory (including the project itself) from the directory tree within IntelliJ and select "New->Generate Tests".
+The tests will appear within a dedicated folder within the project.
+
 
 
