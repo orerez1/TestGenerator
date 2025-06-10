@@ -74,7 +74,7 @@ Once IntelliJ IDEA restarts, follow these steps to verify that the plugin is ins
 
 - Go to **File > Settings > Plugins** and search for "TestGenerator."
 - Ensure that it is listed and enabled.
-- Open a test file and try generating unit tests using the plugin to confirm it’s functioning properly.
+- Right-click a file or directory and go to New-> and verify that "Generate Tests" shows up as an option
 
 ### **4. Troubleshooting**  
 If you run into issues:  
