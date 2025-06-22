@@ -364,7 +364,7 @@ class TestCreator:
             test_class_file.close()
             if result.__contains__(Templates.eof):
                 tests = self.create_tests(existing_tests=result)
-                result = result.replace(Templates.eof, "\n\n" + tests)
+                result = result.replace(Templates.eof, "\n" + tests)
             else:
                 result = self.create_test_class_from_template()
         else:
