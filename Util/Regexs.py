@@ -7,3 +7,4 @@ find_get_instance_method = r'static\s+\w+\s+getInstance\s*\(\)'# Matches static 
 find_static_instance = r'private\s+static\s+\w+\s+\w+\s*;'# Matches static instance variable declarations, e.g., "private static MyClass instance;"
 find_function_variable_types_from_test = r'final\s+(\w+)\s+(\w+)\s*='# Matches final variable declarations in tests, e.g., "final int x = 5;"
 find_tests_within_test_class = r'@Test\s+public\s+void\s+\w+\s*\([\s\S]*?\}'# Matches @Test public void methodName() { ... }
+find_method_from_test = r'\w+(?=\s*\()'# Matches method calls within tests, e.g., "myObject.myMethod()", the method name will be the third match

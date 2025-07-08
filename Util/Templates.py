@@ -1,6 +1,8 @@
 import platform
 import sys
 
+from Representations.JavaTestRepresentation import JavaTestRepresentation
+
 test_class_path = sys.argv[1]
 
 os_name = platform.system().lower()
@@ -66,7 +68,9 @@ def create_standard_test(
     sending_params: str,
     params: str,
     is_singleton: bool,
-    existing_tests: str = ""
+    overloaded_num: int,
+    overloaded_total: int = 0,
+    existing_tests: list= []
 ) -> str:
     """
     Generates a standard test template for a given Java function.
@@ -89,7 +93,10 @@ def create_standard_test(
         - If the function is "getInstance" or the same as the class name, an empty string is returned.
         - Handles both Singleton and non-Singleton class instantiation.
     """
-    declaration = f"public void test{function_in_name}Standard{test_number}()"
+    overload_text = f"Overloaded{overloaded_num}" if overloaded_num else ""
+
+    
+    declaration = f"public void test{function_in_name}{overload_text}Standard{test_number}()"
     # used to determine whether the test is a duplicate
 
     # returns an empty string if the function is "getInstance" or the same as the class name because we don't want to test constructors
@@ -116,7 +123,9 @@ def create_edge_case_test(
     sending_params: str,
     params: str,
     is_singleton: bool,
-    existing_tests: str = ""
+    overloaded_num: int,
+    overloaded_total: int = 0,
+    existing_tests: list= []
 ) -> str:
     """
     Generates an edge case test template for a given Java function.
@@ -141,12 +150,15 @@ def create_edge_case_test(
         - Handles both Singleton and non-Singleton class instantiation.
     """
 
+    
+    
     # returns an empty string if the function is "getInstance" or the same as the class name because we don't want to test constructors
     if java_function in ["getInstance", class_name]:
         return ""
     
+    overload_text = f"Overloaded{overloaded_num}" if overloaded_num else ""
     # used to determine whether the test is a duplicate
-    declaration = f"public void test{function_in_name}EdgeCase{param_name}{test_number}()"
+    declaration = f"public void test{function_in_name}{overload_text}EdgeCase{param_name}{test_number}()"
     
     
 
@@ -170,7 +182,9 @@ def create_null_edge_case_test(
     params: str,
     is_singleton: bool,
     param_type: str,
-    existing_tests: str = ""
+    overloaded_num: int,
+    overloaded_total: int = 0,
+    existing_tests: list= []
 ) -> str:
     """
     Generates a null edge case test template for a given Java function.
@@ -234,8 +248,10 @@ def create_null_edge_case_test(
     # replace the param name with null in the test method parameters
     sending_params = sending_params.replace(lowered_param_name, "null")
     
+    overload_text = f"Overloaded{overloaded_num}" if overloaded_num else ""
+    
     # used to determine whether the test is a duplicate
-    declaration = f"public void test{function_in_name}NullParam{param_name}{test_number}()"
+    declaration = f"public void test{function_in_name}{overload_text}NullParam{param_name}{test_number}()"
     
     return f"""
 \t@Test
@@ -255,7 +271,9 @@ def create_exception_test(
     test_number: str,
     params: str,
     is_singleton: bool,
-    existing_tests: str = "",
+    overloaded_num: int,
+    overloaded_total: int = 0,
+    existing_tests: list= [],
 ) -> str:
     """
     Generates an exception-throwing test template for a given Java function.
@@ -274,15 +292,24 @@ def create_exception_test(
     Returns:
         str: A formatted Java test method for exception throwing as a string.
     """
+    overload_text = f"Overloaded{overloaded_num}" if overloaded_num else ""
 
     # used to determine whether the test is a duplicate
-    declaration = f"public void test{function_in_name}Throws{exception}{test_number}()"
-    return f"""
+    declaration = f"public void test{function_in_name}{overload_text}Throws{exception}{test_number}()"
+    
+    
+    while True:
+        full_text = f"""
 \t@Test(expectedExceptions = {exception}.class)
 \t{declaration} {{
 {params}
 \t\t{get_instance_call(class_name, is_singleton)}().{java_function}({sending_params});
-\t}}""" if not existing_tests.__contains__(declaration) else ""
+\t}}"""
+        test = JavaTestRepresentation(full_text)
+        if declaration in existing_tests and test not in existing_tests:
+            break
+        overloaded_num += 1
+    return full_text if not existing_tests.__contains__(test) else ""
 
 # templates - were originally meant to be used directly but are now used as examples for the functions above
 standard_test = """\t@Test

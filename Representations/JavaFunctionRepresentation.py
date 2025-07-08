@@ -93,11 +93,16 @@ class JavaFunctionRepresentation:
     
     def extract_name(self):
         """
-        This function extracts the name of the funciton from its declaration
+        This function extracts the name of the function from its declaration
         and saves it in the "name" member
         """
         
         self.name = self.declaration.split("(")[0].split(" ")[-1]
+    
+    def __eq__(self, value):
+        if isinstance(value, str):
+            return self.name == value
+        return isinstance(value, JavaFunctionRepresentation) and self.full_text == value.full_text
         
     def __init__(self, full_text: str) -> None:
         """

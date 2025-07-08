@@ -75,7 +75,8 @@ def create_standard_tests_for_function(
     class_name: str,
     test_params: str,
     is_singleton: bool,
-    existing_tests: str = ""
+    overloaded_num: int = None,
+    existing_tests: list= []
 ) -> str:
     """
     Generates multiple standard test templates for a Java function.
@@ -104,6 +105,7 @@ def create_standard_tests_for_function(
             sending_params=sending_params,
             params=test_params,
             is_singleton=is_singleton,
+            overloaded_num=overloaded_num,
             existing_tests=existing_tests
         )
     return function_tests
@@ -113,7 +115,8 @@ def create_exception_throwing_tests_for_function(
     class_name: str,
     test_params: str,
     is_singleton: bool,
-    existing_tests: str = ""
+    overloaded_num: int = None,
+    existing_tests: list= []
 ) -> str:
 
     """
@@ -143,6 +146,7 @@ def create_exception_throwing_tests_for_function(
                 test_number=number,
                 params=test_params,
                 is_singleton=is_singleton,
+                overloaded_num=overloaded_num,
                 existing_tests=existing_tests
             )
     return function_tests
@@ -153,7 +157,8 @@ def create_edge_case_test_for_function(
     class_name: str,
     test_params: str,
     is_singleton: bool,
-    existing_tests: str = ""
+    overloaded_num: int = None,
+    existing_tests: list= []
 ) -> str:
     """
     Generates edge case test templates for a Java function.
@@ -187,6 +192,7 @@ def create_edge_case_test_for_function(
                 sending_params=sending_params,
                 params=test_params,
                 is_singleton=is_singleton,
+                overloaded_num=overloaded_num,                
                 existing_tests=existing_tests,
             )
 
@@ -197,7 +203,8 @@ def create_null_edge_case_test_for_function(
     class_name: str,
     test_params: str,
     is_singleton: bool,
-    existing_tests: str = ""
+    overloaded_num: int = None,
+    existing_tests: list= []
 ) -> str:
     """
     Generates edge case test templates for a Java function.
@@ -231,6 +238,7 @@ def create_null_edge_case_test_for_function(
                 params=test_params,
                 is_singleton=is_singleton,
                 param_type=param_type,
+                overloaded_num=overloaded_num,
                 existing_tests=existing_tests
             )
 
@@ -260,6 +268,69 @@ class TestCreator:
     full_text = ""
     class_representation = None
     
+    def create_tests_for_function(self,func:JavaFunctionRepresentation, existing_tests:str = "", overloaded_num=None) -> str:
+        """
+        Generates test templates for a Java function.
+
+        This method creates test templates for the given Java function, including standard tests, edge case tests, and tests for expected exceptions.
+
+        Args:
+            func (JavaFunctionRepresentation): The Java function representation object.
+            class_name (str): The name of the class containing the function.
+            test_params (str): A string containing test parameters.
+            is_singleton (bool): Indicates if the class is a Singleton.
+            existing_tests (str): Existing tests to append new tests to, if any.
+
+        Returns:
+            str: A string containing formatted Java test methods.
+        """
+        tests = ""
+        test_params = create_test_parameters(java_function=func)
+        test = create_standard_tests_for_function(
+            func=func,
+            class_name=self.class_representation.name,
+            test_params=test_params,
+            is_singleton=self.class_representation.is_singleton,
+            overloaded_num=overloaded_num,
+            existing_tests=existing_tests
+        )
+        tests += test
+
+        test_params = create_test_parameters(java_function=func)
+        test = create_edge_case_test_for_function(
+            func=func,
+            class_name=self.class_representation.name,
+            test_params=test_params,
+            is_singleton=self.class_representation.is_singleton,
+            overloaded_num=overloaded_num,
+            existing_tests=existing_tests
+        )
+        tests += test
+
+        test_params = create_test_parameters(java_function=func)
+        test = create_null_edge_case_test_for_function(
+            func=func,
+            class_name=self.class_representation.name,
+            test_params=test_params,
+            is_singleton=self.class_representation.is_singleton,
+            overloaded_num=overloaded_num,
+            existing_tests=existing_tests
+        )
+        tests += test
+            
+        test_params = create_test_parameters(java_function=func)
+        test = create_exception_throwing_tests_for_function(
+            func=func,
+            class_name=self.class_representation.name,
+            test_params=test_params,
+            is_singleton=self.class_representation.is_singleton,
+            overloaded_num=overloaded_num,
+            existing_tests=existing_tests
+        )
+        tests += test
+        
+        return tests
+    
 
     def create_tests(self, existing_tests:str = "") -> str:        
         """
@@ -272,49 +343,27 @@ class TestCreator:
             str: A string containing formatted Java test methods.
         """
         tests = ""
+        func_dic_by_name = {}
         for func in self.class_representation.functions:
-            test_params = create_test_parameters(java_function=func)
-            test = create_standard_tests_for_function(
-                func=func,
-                class_name=self.class_representation.name,
-                test_params=test_params,
-                is_singleton=self.class_representation.is_singleton,
-                existing_tests=existing_tests
-            )
-            tests += test
+            if func.name not in func_dic_by_name:
+                func_dic_by_name[func.name] = [func]
+            else:
+                func_dic_by_name[func.name].append(func)
 
-        for func in self.class_representation.functions:
-            test_params = create_test_parameters(java_function=func)
-            test = create_edge_case_test_for_function(
-                func=func,
-                class_name=self.class_representation.name,
-                test_params=test_params,
-                is_singleton=self.class_representation.is_singleton,
-                existing_tests=existing_tests
-            )
-            tests += test
-
-        for func in self.class_representation.functions:
-            test_params = create_test_parameters(java_function=func)
-            test = create_null_edge_case_test_for_function(
-                func=func,
-                class_name=self.class_representation.name,
-                test_params=test_params,
-                is_singleton=self.class_representation.is_singleton,
-                existing_tests=existing_tests
-            )
-            tests += test
-                
-        for func in self.class_representation.functions:
-            test_params = create_test_parameters(java_function=func)
-            test = create_exception_throwing_tests_for_function(
-                func=func,
-                class_name=self.class_representation.name,
-                test_params=test_params,
-                is_singleton=self.class_representation.is_singleton,
-                existing_tests=existing_tests
-            )
-            tests += test
+        for func in func_dic_by_name.values():
+            if len(func) > 1:
+                # If there are overloaded functions, we will create tests for each of them
+                for overloaded_num, overloaded_func in enumerate(func):
+                    tests += self.create_tests_for_function(
+                        func=overloaded_func,
+                        existing_tests=existing_tests,
+                        overloaded_num=overloaded_num+1
+                    )
+            else:
+                tests += self.create_tests_for_function(
+                    func=func[0], existing_tests=existing_tests
+                )
+        
                 
         return tests + Templates.eof  # Add end of file marker to the tests string
 
@@ -370,7 +419,9 @@ class TestCreator:
                 previous_tests_list = []
                 for match in matches:
                     previous_tests_list.append(JavaTestRepresentation(match))
-                tests = self.create_tests(existing_tests=result)
+                for test in previous_tests_list:
+                    print(test)
+                tests = self.create_tests(existing_tests=previous_tests_list)
                 result = result.replace(Templates.eof, tests)
             else:
                 result = self.create_test_class_from_template()
